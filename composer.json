@@ -1,0 +1,21 @@
+{
+    "name": "creative/fullstack",
+    "description": "PHP to JavaScript object mapping and more",
+    "license": "MIT",
+    "authors": [ {
+        "name": "Julian Aubourg",
+        "email": "j@ubourg.net",
+        "homepage": "http://jaubourg.net",
+        "role": "Developer"
+    } ],
+    "autoload": {
+        "psr-4": {
+            "CreativeArea\\": "CreativeArea/"
+        }
+    },
+    "require": {
+        "leafo/scssphp": "0.0.12"
+    },
+	"require-dev": {
+	}
+}
