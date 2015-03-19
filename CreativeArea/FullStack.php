@@ -6,7 +6,7 @@
 class FullStack
 {
     /**
-     * @var (string|array)[][]
+     * @var array
      */
     private static $annotations = array(
         "Class" => array(
