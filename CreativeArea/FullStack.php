@@ -11,20 +11,20 @@ class FullStack
     private static $annotations = array(
         "Class" => array(
             "DependsOn" => "string[]",
-            "Service" => "bool",
+            "Service" => "flag",
             "Script" => "string[]",
             "Style" => "string[]",
         ),
         "Method" => array(
-            "Cache" => "bool",
-            "Post" => "bool",
-            "Script" => "bool",
-            "Template" => "bool",
+            "Cache" => "flag",
+            "Post" => "flag",
+            "Script" => "flag",
+            "Template" => "flag",
         ),
         "Property" => array(
-            "Instance" => "bool",
-            "Raw" => "bool",
-            "Synchronize" => "bool",
+            "Instance" => "flag",
+            "Raw" => "flag",
+            "Synchronize" => "flag",
         ),
     );
 
