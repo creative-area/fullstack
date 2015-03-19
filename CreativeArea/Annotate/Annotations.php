@@ -6,7 +6,9 @@
 class Annotations
 {
     public static $definitionTypes = array(
-        "bool" => "bool",
+        "bool" => "boolean",
+        "boolean" => "boolean",
+        "flag" => "boolean",
         "object" => "object",
         "string" => "string",
         "string[]" => "array_of_strings",
@@ -76,7 +78,7 @@ class Annotations
      *
      * @throws Exception
      */
-    private function add_bool($type, $value)
+    private function add_boolean($type, $value)
     {
         if (isset($this->cache[ $type ])) {
             throw new Exception("annotation $type cannot be used twice");
@@ -88,9 +90,9 @@ class Annotations
     }
 
     /**
-     * @param string        $type
-     * @param stdClass|null $value
-     * @param array         $default
+     * @param string         $type
+     * @param \stdClass|null $value
+     * @param array          $default
      *
      * @throws Exception
      */
