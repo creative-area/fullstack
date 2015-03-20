@@ -13,6 +13,17 @@ class Script
     }
 
     /**
+     * @param string $string
+     *
+     * @return string
+     */
+    public static function minify($string)
+    {
+        // TODO: find a minifier in PHP that is not a joke
+        return $string;
+    }
+
+    /**
      * @param array $input
      *
      * @return string|null

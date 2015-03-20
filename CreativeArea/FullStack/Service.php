@@ -55,17 +55,19 @@ class Service
     );
 
     /**
+     * @param bool $minify
+     *
      * @throws Exception
      *
      * @return string
      */
-    public function toScript()
+    public function toScript($minify = false)
     {
         if ($this->abstract) {
             throw new Exception("cannot generate code for abstract service");
         }
 
-        return Script::object(array(
+        $code = Script::object(array(
             "dependencies" => $this->dependencies,
             "instantiate" => $this->instantiate,
             "code" => Script::object(array(
@@ -82,6 +84,8 @@ class Service
                         "return ".Script::object($this->methods[ "Remote" ]).";"),
             )),
         ));
+
+        return $minify ? Script::minify($code) : $code;
     }
 
     /**

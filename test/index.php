@@ -16,7 +16,7 @@ $fullStack = (new CreativeArea\FullStack())
 
 $first = $fullStack->getService("First");
 
-echo $first->toScript()."\n\n";
+echo $first->toScript(true)."\n\n";
 
 $base = $fullStack->getService("Base");
 
