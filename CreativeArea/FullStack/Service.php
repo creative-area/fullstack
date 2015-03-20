@@ -153,10 +153,9 @@ class Service
                     $parts[] = $fullStack->$method($filename);
                 }
             }
+            $code = "";
             if ( $type === "Script") {
-                if ($list) {
-                    $this->code[ $type ] = json_encode(implode(";\n", $parts));
-                }
+                $code = implode(";\n", $parts);
             } else {
                 $styleFile = preg_replace("/\\.php$/", ".scss", $reflectionClass->getFileName());
                 if (file_exists($styleFile)) {
@@ -175,6 +174,9 @@ class Service
                     }
                     // TODO: actually compile scss
                 }
+            }
+            if ($code) {
+                $this->code[ $type ] = json_encode($code);
             }
         }
 
