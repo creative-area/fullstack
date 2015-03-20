@@ -7,6 +7,7 @@
  * @DependsOn MyOtherService
  *
  * @Script first.js
+ * @Style first.scss
  */
 class First
 {

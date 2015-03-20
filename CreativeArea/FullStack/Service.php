@@ -93,15 +93,13 @@ class Service
         $this->dependencies = $reflectionClass->getAnnotation("DependsOn");
 
         // CODE
-        foreach (array(
-            "Script" => ";\n",
-            "Style" => "\n",
-        ) as $type => $glue) {
+        foreach (array("Script", "Style") as $type) {
+            $method = $type === "Script" ? "content" : "exists";
             $list = $reflectionClass->getAnnotation($type);
             if (!$list) {
                 continue;
             }
-            $contents = array();
+            $parts = array();
             foreach ($list as $filename) {
                 if (preg_match("/^->/", $filename)) {
                     $methodName = substr($filename, 2);
@@ -116,9 +114,17 @@ class Service
                     $methodsToIgnore[ $methodName ] = true;
                     $filename = $method->invoke($instance);
                 }
-                $contents[] = $fileFinders[ $type ]->content($filename);
+                $parts[] = $fileFinders[ $type ]->$method($filename);
             }
-            $this->code[ $type ] = json_encode(implode($glue, $contents));
+            if ( $type === "Script") {
+                $this->code[ $type ] = json_encode(implode(";\n", $parts));
+            } else {
+                $styleFile = preg_replace("/\\.php$/", ".scss", $reflectionClass->getFileName());
+                if (file_exists($styleFile)) {
+                    $parts[] = $styleFile;
+                }
+                $this->code[ $type ] = $parts;
+            }
         }
 
         // PROPERTIES

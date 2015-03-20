@@ -10,6 +10,7 @@ $time = microtime(true);
 $service = (new CreativeArea\FullStack())
     ->using("Service")
     ->scriptPath(__DIR__."/script")
+    ->stylePath("style")
     ->getService("First");
 
 echo "$service\n\n";
