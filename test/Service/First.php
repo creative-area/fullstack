@@ -5,6 +5,8 @@
  *
  * @Service
  * @DependsOn MyOtherService
+ *
+ * @Script first.js
  */
 class First
 {

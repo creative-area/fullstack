@@ -1,4 +1,4 @@
-<?php namespace CreativeArea\Annotate;
+<?php namespace CreativeArea\FileFinder;
 
 class Exception extends \CreativeArea\Exception
 {

@@ -19,7 +19,7 @@ class FileFinder
     {
         static $absoluteRegExp = null;
         if ($absoluteRegExp === null) {
-            $absoluteRegExp = DIRECTORY_SEPARATOR === "\\" ? "/^\\\\/" : "!^/!";
+            $absoluteRegExp = DIRECTORY_SEPARATOR === "\\" ? "/^[A-Z]:\\\\/" : "!^/!";
         }
 
         return preg_match($absoluteRegExp, $path);
@@ -34,11 +34,11 @@ class FileFinder
     public function addPath($path, $callStack)
     {
         if (!FileFinder::isAbsolute($path)) {
-            $path = dirname(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $callStack + 1)[ $callStack ])."/$path";
+            $path = dirname(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $callStack + 1)[ $callStack ]["file"])."/$path";
         }
         $realPath = realpath($path);
         if ($realPath === false) {
-            throw new Exception("directory $path doesn't exist or cannot be reached");
+            throw new FileFinder\Exception("directory $path doesn't exist or cannot be reached");
         }
         array_unshift($this->path, "$realPath/");
     }
@@ -56,7 +56,7 @@ class FileFinder
             $content = false;
         }
 
-        return content;
+        return $content;
     }
 
     /**
@@ -69,6 +69,7 @@ class FileFinder
      */
     private function find($fileName, $action)
     {
+        $result = false;
         if (FileFinder::isAbsolute($fileName)) {
             $result = call_user_func($action, $fileName);
         } else {
@@ -80,7 +81,7 @@ class FileFinder
             }
         }
         if ($result === false) {
-            throw new Exception("file $path, referenced in $includeFileName, doesn't exist or cannot be reached");
+            throw new FileFinder\Exception("file $fileName doesn't exist or cannot be reached");
         }
 
         return $result;

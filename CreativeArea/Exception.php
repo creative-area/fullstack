@@ -1,6 +1,6 @@
-<?php namespace CreativeArea\Annotate;
+<?php namespace CreativeArea;
 
-class Exception extends \CreativeArea\Exception
+class Exception extends \Exception
 {
     public function __construct($message = "", $code = 0, $previous = null)
     {

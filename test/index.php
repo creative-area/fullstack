@@ -1,13 +1,16 @@
 <?php
 
-set_include_path(implode(PATH_SEPARATOR, array(get_include_path(), __DIR__ . "/..")));
+set_include_path(implode(PATH_SEPARATOR, array(get_include_path(), __DIR__."/..")));
 spl_autoload_register();
 
 header("Content-Type: text/plain");
 
 $time = microtime(true);
 
-$service = (new CreativeArea\FullStack())->using("Service")->getService("First");
+$service = (new CreativeArea\FullStack())
+    ->using("Service")
+    ->scriptPath(__DIR__."/script")
+    ->getService("First");
 
 echo "$service\n\n";
 
