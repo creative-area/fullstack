@@ -1,0 +1,8 @@
+{
+    "name": "fullstack",
+    "private": true,
+    "version": "0.0.0",
+    "dependencies": {
+        "uglify-js": "2.4.17"
+    }
+}
