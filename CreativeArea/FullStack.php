@@ -39,7 +39,7 @@ class FullStack
     private $namespaces = array();
 
     /**
-     * @var StorageCache|null
+     * @var Storage\Cache|null
      */
     private $cache = null;
 
@@ -133,7 +133,7 @@ class FullStack
      */
     public function storage(&$storage)
     {
-        $this->cache = $storage === null ? null : new StorageCache($storage);
+        $this->cache = $storage === null ? null : new Storage\Cache($storage);
 
         return $this;
     }

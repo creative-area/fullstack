@@ -1,4 +1,4 @@
-<?php namespace CreativeArea\StorageCache;
+<?php namespace CreativeArea\Storage\Cache;
 
 /**
  * Class Entry.

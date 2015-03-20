@@ -1,17 +1,17 @@
-<?php namespace CreativeArea;
+<?php namespace CreativeArea\Storage;
 
 /**
  * Class Cache.
  */
-class StorageCache
+class Cache
 {
     /**
-     * @var Storage
+     * @var \CreativeArea\Storage
      */
     private $storage;
 
     /**
-     * @param Storage $storage
+     * @param \CreativeArea\Storage $storage
      */
     public function __construct(&$storage)
     {
@@ -28,10 +28,10 @@ class StorageCache
     public function getOrCreate($key, $version, $createFunction)
     {
         $record = & $this->storage->getRecord($key);
-        $entry = & StorageCache\Entry::fromString($record->read());
+        $entry = & Cache\Entry::fromString($record->read());
         if (!$entry->isCompatible($version)) {
             $record->lock();
-            $entry = & StorageCache\Entry::fromString($record->read());
+            $entry = & Cache\Entry::fromString($record->read());
             if (!$entry->isCompatible($version)) {
                 $entry->version = $version;
                 $entry->value = call_user_func($createFunction, $key);
@@ -45,4 +45,4 @@ class StorageCache
 }
 
 // Needed to load the classes before attempting to de-serialize
-new StorageCache\Entry();
+new Cache\Entry();
