@@ -87,9 +87,9 @@ class Service
 
         $methodsToIgnore = array(
             "__construct" => true,
-            "__construct_generate" => true,
-            "__construct_instantiate" => true,
-            "__construct_execute" => true,
+            "__construct_service" => true,
+            "__construct_instance" => true,
+            "__construct_execution" => true,
         );
 
         if ($reflectionClass->isAbstract()) {
@@ -97,6 +97,9 @@ class Service
             $instance = null;
         } else {
             $instance = $reflectionClass->newInstance();
+            if ($reflectionClass->hasMethod("__construct_service")) {
+                $instance->__construct_service();
+            }
         }
 
         // DEPENDENCIES
@@ -155,7 +158,7 @@ class Service
                 $this->instanceProperties[ $property->name ] = !!$property->getAnnotation("Synchronize");
                 continue;
             }
-            $value = $property->getValue($this->instance);
+            $value = $property->getValue($instance);
             if (!$property->getAnnotation("Raw")) {
                 $value = json_encode($value);
             }

@@ -11,6 +11,15 @@
 class First extends Base
 {
     /**
+     * @var bool
+     */
+    public $constructServiceCalled = false;
+
+    public function __construct_service() {
+        $this->constructServiceCalled = true;
+    }
+
+    /**
      * @return string
      * @Script
      */

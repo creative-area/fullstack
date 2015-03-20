@@ -67,7 +67,7 @@ class ReflectionClass extends \ReflectionClass
      *
      * @return ReflectionProperty
      */
-    public function getProperty($name)
+    public function &getProperty($name)
     {
         return $this->annotate->getProperty($this->name, $name);
     }
