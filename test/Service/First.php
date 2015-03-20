@@ -4,12 +4,11 @@
  * Class First.
  *
  * @Service
- * @DependsOn MyOtherService
  *
  * @Script first.js
  * @Style first.scss
  */
-class First
+class First extends Base
 {
     /**
      * @return string

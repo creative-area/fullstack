@@ -70,11 +70,11 @@ class Service
 
     /**
      * @param \CreativeArea\Annotate\ReflectionClass $reflectionClass
-     * @param \CreativeArea\FileFinder[]             $fileFinders
+     * @param \CreativeArea\FullStack                $fullStack
      *
      * @throws Exception
      */
-    public function build(&$reflectionClass, &$fileFinders)
+    public function build(&$reflectionClass, &$fullStack)
     {
         if (!$reflectionClass->getAnnotation("Service")) {
             throw new Exception("class '$reflectionClass->name' is not a service");
@@ -98,7 +98,7 @@ class Service
             if (!$list) {
                 continue;
             }
-            $method = $type === "Script" ? "content" : "exists";
+            $method = $type === "Script" ? "_getScript" : "_getStyle";
             $parts = array();
             foreach ($list as $filename) {
                 if (preg_match("/^->/", $filename)) {
@@ -114,7 +114,7 @@ class Service
                     $methodsToIgnore[ $methodName ] = true;
                     $filename = $method->invoke($instance);
                 }
-                $parts[] = $fileFinders[ $type ]->$method($filename);
+                $parts[] = $fullStack->$method($filename);
             }
             if ( $type === "Script") {
                 $this->code[ $type ] = json_encode(implode(";\n", $parts));

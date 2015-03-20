@@ -87,6 +87,16 @@ class FullStack
     }
 
     /**
+     * @param $path
+     *
+     * @return string
+     */
+    public function _getScript($path)
+    {
+        return $this->fileFinders[ "Script" ]->content($path);
+    }
+
+    /**
      * @param string $path
      *
      * @return $this
@@ -96,6 +106,16 @@ class FullStack
         $this->fileFinders[ "Style" ]->addPath($path, 1);
 
         return $this;
+    }
+
+    /**
+     * @param $path
+     *
+     * @return string
+     */
+    public function _getStyle($path)
+    {
+        return $this->fileFinders[ "Style" ]->exists($path);
     }
 
     /**
@@ -152,7 +172,7 @@ class FullStack
     {
         $reflectionClass = & $this->classForService($name);
         $service = new FullStack\Service();
-        $service->build($reflectionClass, $this->fileFinders);
+        $service->build($reflectionClass, $this);
 
         return $service;
     }
