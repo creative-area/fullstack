@@ -158,7 +158,7 @@ class FullStack
             } catch (ReflectionException $e) {
             }
         }
-        throw new Exception("Cannot find class for service $name");
+        throw new FullStack\Exception("Cannot find class for service $name");
     }
 
     /**

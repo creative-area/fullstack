@@ -6,6 +6,11 @@
 class Service
 {
     /**
+     * @var bool
+     */
+    public $abstract = false;
+
+    /**
      * @var string[]
      */
     public $code = array();
@@ -87,7 +92,12 @@ class Service
             "__construct_execute" => true,
         );
 
-        $instance = $reflectionClass->newInstance();
+        if ($reflectionClass->isAbstract()) {
+            $this->abstract = true;
+            $instance = null;
+        } else {
+            $instance = $reflectionClass->newInstance();
+        }
 
         // DEPENDENCIES
         $this->dependencies = $reflectionClass->getAnnotation("DependsOn");
@@ -103,6 +113,10 @@ class Service
             foreach ($list as $filename) {
                 if (preg_match("/^->/", $filename)) {
                     $methodName = substr($filename, 2);
+                    if ($this->abstract)
+                    {
+                        throw new Exception("Cannot call method $methodName of abstract class $reflectionClass->name");
+                    }
                     try {
                         $method = & $reflectionClass->getMethod($methodName);
                     } catch (ReflectionException $e) {
@@ -125,6 +139,11 @@ class Service
                 }
                 $this->code[ $type ] = $parts;
             }
+        }
+
+        // Don't go any further for abstract classes
+        if ($this->abstract) {
+            return;
         }
 
         // PROPERTIES
@@ -174,7 +193,7 @@ class Service
                 $args = array_map(function (&$parameter) {
                     return $parameter->name;
                 }, $parameters);
-                $body = "return remote( this, ".json_encode($method->name).", arguments );";
+                $body = "return remote(this, ".json_encode($method->name).", arguments);";
                 $methodsArray = & $this->methods[ "Remote" ];
             }
             $methodsArray[ $method->name ] = JavaScript::createFunction($args, $body, $method->getAnnotation("Cache"));
