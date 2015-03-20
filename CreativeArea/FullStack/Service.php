@@ -58,7 +58,7 @@ class Service
      * @throws Exception
      * @return string
      */
-    public function toString()
+    public function toJavaScript()
     {
         if ($this->abstract) {
             throw new Exception("cannot generate code for abstract service");
