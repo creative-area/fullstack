@@ -32,7 +32,7 @@ class Annotate
         $tmp = array();
         $className = get_class($reflector);
         if (!preg_match("/(Class|Method|Property)$/", $className, $tmp)) {
-            throw new Exception("Cannot get annotations for a parameter of class '$className'");
+            throw new Annotate\Exception("Cannot get annotations for a parameter of class '$className'");
         }
 
         return new Annotate\Annotations($reflector->getDocComment(), $this->definitions[ $tmp[1] ]);
