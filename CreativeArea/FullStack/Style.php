@@ -36,6 +36,7 @@ class Style
             ".marker{----fullstack:0}\n".
             Style::filesToImport($own)
         );
+
         return preg_replace("/^.*----fullstack[^}]+}/", "", $compiled);
     }
 }
