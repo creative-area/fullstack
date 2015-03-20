@@ -93,6 +93,10 @@ class FullStack
      */
     public function _getScript($path)
     {
+        if (!preg_match("/\\.js$/", $path)) {
+            $path = "$path.js";
+        }
+
         return $this->fileFinders[ "Script" ]->content($path);
     }
 
@@ -115,6 +119,10 @@ class FullStack
      */
     public function _getStyle($path)
     {
+        if (!preg_match("/\\.scss$/", $path)) {
+            $path = "$path.scss";
+        }
+
         return $this->fileFinders[ "Style" ]->exists($path);
     }
 

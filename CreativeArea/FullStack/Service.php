@@ -175,13 +175,7 @@ class Service
                     $code = Style::compile(
                         $this->styleFiles[ "parent" ],
                         $this->styleFiles[ "own" ],
-                        function ($path) use (&$fullStack) {
-                            if (!preg_match("/\\.scss$/", $path)) {
-                                $path = "$path.scss";
-                            }
-
-                            return $fullStack->_getStyle($path);
-                        }
+                        array(&$fullStack, "_getStyle")
                     );
                 }
             }
