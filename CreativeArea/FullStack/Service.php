@@ -94,11 +94,11 @@ class Service
 
         // CODE
         foreach (array("Script", "Style") as $type) {
-            $method = $type === "Script" ? "content" : "exists";
             $list = $reflectionClass->getAnnotation($type);
             if (!$list) {
                 continue;
             }
+            $method = $type === "Script" ? "content" : "exists";
             $parts = array();
             foreach ($list as $filename) {
                 if (preg_match("/^->/", $filename)) {
