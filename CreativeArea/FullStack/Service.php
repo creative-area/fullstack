@@ -56,6 +56,7 @@ class Service
 
     /**
      * @throws Exception
+     *
      * @return string
      */
     public function toJavaScript()
@@ -116,7 +117,7 @@ class Service
             }
         }
 
-        while(($parentClass = & $reflectionClass->getParentClass()) && !$parentClass->getAnnotation("Service")) {
+        while (($parentClass = & $reflectionClass->getParentClass()) && !$parentClass->getAnnotation("Service")) {
         }
 
         if ($parentClass) {
@@ -135,8 +136,7 @@ class Service
                 foreach ($list as $filename) {
                     if (preg_match("/^->/", $filename)) {
                         $methodName = substr($filename, 2);
-                        if ($this->abstract)
-                        {
+                        if ($this->abstract) {
                             throw new Exception("Cannot call method $methodName of abstract class $reflectionClass->name");
                         }
                         try {
@@ -154,7 +154,7 @@ class Service
                 }
             }
             $code = "";
-            if ( $type === "Script") {
+            if ($type === "Script") {
                 $code = implode(";\n", $parts);
             } else {
                 $styleFile = preg_replace("/\\.php$/", ".scss", $reflectionClass->getFileName());
@@ -175,10 +175,11 @@ class Service
                     $code = Style::compile(
                         $this->styleFiles[ "parent" ],
                         $this->styleFiles[ "own" ],
-                        function($path) use (&$fullStack) {
+                        function ($path) use (&$fullStack) {
                             if (!preg_match("/\\.scss$/", $path)) {
                                 $path = "$path.scss";
                             }
+
                             return $fullStack->_getStyle($path);
                         }
                     );

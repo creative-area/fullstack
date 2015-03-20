@@ -1,7 +1,7 @@
 <?php namespace CreativeArea\FullStack;
 
-class Style {
-
+class Style
+{
     /**
      * @param string[] $paths
      *
@@ -10,16 +10,17 @@ class Style {
     private static function filesToImport(&$paths)
     {
         $output = "";
-        foreach($paths as $path) {
-            $output .= "@import " . json_encode($path) . ";\n";
+        foreach ($paths as $path) {
+            $output .= "@import ".json_encode($path).";\n";
         }
+
         return $output;
     }
 
     /**
-     * @param string[]                $parent
-     * @param string[]                $own
-     * @param \CreativeArea\FullStack $fullStack
+     * @param string[] $parent
+     * @param string[] $own
+     * @param callable $includeCallback
      *
      * @return string
      *
@@ -35,6 +36,7 @@ class Style {
             ".marker{--fullstack:0}\n".
             Style::filesToImport($own)
         );
+
         return preg_replace("/^[^}]*}\s*/", "", explode("--fullstack", $compiled)[ 1 ]);
     }
 }

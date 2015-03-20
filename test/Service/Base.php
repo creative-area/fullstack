@@ -14,7 +14,8 @@ abstract class Base
      *
      * @Cache
      */
-    public function lowercase($string) {
+    public function lowercase($string)
+    {
         return strtolower($string);
     }
 }

@@ -163,7 +163,9 @@ class FullStack
 
     /**
      * @param string $className
+     *
      * @return string
+     *
      * @throws Exception
      */
     public function serviceForClass($className)
@@ -172,11 +174,12 @@ class FullStack
         foreach ($this->namespaces as $namespace) {
             $length = strlen($namespace);
             if (strrpos($className, $namespace, $offset) !== false) {
-                $serviceName = str_replace("\\", "/", substr($className,strlen($namespace)));
+                $serviceName = str_replace("\\", "/", substr($className, strlen($namespace)));
                 $testClass = $this->classForService($serviceName);
                 if ($testClass->name !== $className) {
                     throw new Exception("class $className matches service $serviceName which matches class $testClass->name");
                 }
+
                 return $serviceName;
             }
         }
@@ -217,6 +220,7 @@ class FullStack
                 ? $this->generateService($name)
                 : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateService"));
         }
+
         return $this->serviceMemoryCache[ $name ];
     }
 }

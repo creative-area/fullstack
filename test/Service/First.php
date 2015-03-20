@@ -15,7 +15,8 @@ class First extends Base
      */
     public $constructServiceCalled = false;
 
-    public function __construct_service() {
+    public function __construct_service()
+    {
         $this->constructServiceCalled = true;
     }
 

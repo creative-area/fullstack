@@ -3,7 +3,7 @@
 set_include_path(implode(PATH_SEPARATOR, array(get_include_path(), __DIR__."/..")));
 spl_autoload_register();
 
-require_once __DIR__ . "/../vendor/autoload.php";
+require_once __DIR__."/../vendor/autoload.php";
 
 header("Content-Type: text/plain");
 
@@ -16,12 +16,12 @@ $fullStack = (new CreativeArea\FullStack())
 
 $first = $fullStack->getService("First");
 
-echo $first->toJavaScript() . "\n\n";
+echo $first->toJavaScript()."\n\n";
 
 $base = $fullStack->getService("Base");
 
-echo json_encode($first, JSON_PRETTY_PRINT) . "\n\n";
-echo json_encode($base, JSON_PRETTY_PRINT) . "\n\n";
+echo json_encode($first, JSON_PRETTY_PRINT)."\n\n";
+echo json_encode($base, JSON_PRETTY_PRINT)."\n\n";
 
 $time = microtime(true) - $time;
 
