@@ -7,18 +7,22 @@ header("Content-Type: text/plain");
 
 $time = microtime(true);
 
-$service = (new CreativeArea\FullStack())
+$fullStack = (new CreativeArea\FullStack())
     ->using("Service")
     ->scriptPath(__DIR__."/script")
-    ->stylePath("style")
-    ->getService("First");
+    ->stylePath("style");
 
-echo "$service\n\n";
+$first = $fullStack->getService("First");
+
+echo $first->toString() . "\n\n";
+
+$base = $fullStack->getService("Base");
+
+echo json_encode($first, JSON_PRETTY_PRINT) . "\n\n";
+echo json_encode($base, JSON_PRETTY_PRINT) . "\n\n";
 
 $time = microtime(true) - $time;
 
 $time = round($time * 1000);
 
 echo "Done in $time ms\n\n";
-
-echo json_encode($service, JSON_PRETTY_PRINT);

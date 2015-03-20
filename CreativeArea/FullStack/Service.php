@@ -11,9 +11,19 @@ class Service
     public $abstract = false;
 
     /**
+     * @var null|string
+     */
+    public $parent = null;
+
+    /**
      * @var string[]
      */
     public $code = array();
+
+    /**
+     * @var string[][]
+     */
+    public $styleFiles = array();
 
     /**
      * @var null|string[]
@@ -45,10 +55,14 @@ class Service
     );
 
     /**
+     * @throws Exception
      * @return string
      */
-    public function __toString()
+    public function toString()
     {
+        if ($this->abstract) {
+            throw new Exception("cannot generate code for abstract service");
+        }
         function getOrNull(&$array, $key)
         {
             return isset($array[$key]) ? $array[$key] : null;
@@ -102,45 +116,65 @@ class Service
             }
         }
 
+        while(($parentClass = & $reflectionClass->getParentClass()) && !$parentClass->getAnnotation("Service")) {
+        }
+
+        if ($parentClass) {
+            $this->parent = $fullStack->serviceForClass($parentClass->name);
+        }
+
         // DEPENDENCIES
         $this->dependencies = $reflectionClass->getAnnotation("DependsOn");
 
         // CODE
         foreach (array("Script", "Style") as $type) {
             $list = $reflectionClass->getAnnotation($type);
-            if (!$list) {
-                continue;
-            }
-            $method = $type === "Script" ? "_getScript" : "_getStyle";
             $parts = array();
-            foreach ($list as $filename) {
-                if (preg_match("/^->/", $filename)) {
-                    $methodName = substr($filename, 2);
-                    if ($this->abstract)
-                    {
-                        throw new Exception("Cannot call method $methodName of abstract class $reflectionClass->name");
+            if ($list) {
+                $method = $type === "Script" ? "_getScript" : "_getStyle";
+                foreach ($list as $filename) {
+                    if (preg_match("/^->/", $filename)) {
+                        $methodName = substr($filename, 2);
+                        if ($this->abstract)
+                        {
+                            throw new Exception("Cannot call method $methodName of abstract class $reflectionClass->name");
+                        }
+                        try {
+                            $method = & $reflectionClass->getMethod($methodName);
+                        } catch (ReflectionException $e) {
+                            throw new Exception("unknown method '$methodName'");
+                        }
+                        if (!$method->isPublic() || $method->isStatic()) {
+                            throw new Exception("method '$methodName' is non-public or static");
+                        }
+                        $methodsToIgnore[ $methodName ] = true;
+                        $filename = $method->invoke($instance);
                     }
-                    try {
-                        $method = & $reflectionClass->getMethod($methodName);
-                    } catch (ReflectionException $e) {
-                        throw new Exception("unknown method '$methodName'");
-                    }
-                    if (!$method->isPublic() || $method->isStatic()) {
-                        throw new Exception("method '$methodName' is non-public or static");
-                    }
-                    $methodsToIgnore[ $methodName ] = true;
-                    $filename = $method->invoke($instance);
+                    $parts[] = $fullStack->$method($filename);
                 }
-                $parts[] = $fullStack->$method($filename);
             }
             if ( $type === "Script") {
-                $this->code[ $type ] = json_encode(implode(";\n", $parts));
+                if ($list) {
+                    $this->code[ $type ] = json_encode(implode(";\n", $parts));
+                }
             } else {
                 $styleFile = preg_replace("/\\.php$/", ".scss", $reflectionClass->getFileName());
                 if (file_exists($styleFile)) {
                     $parts[] = $styleFile;
                 }
-                $this->code[ $type ] = $parts;
+                if (count($parts)) {
+                    $this->styleFiles = array(
+                        "parent" => array(),
+                        "own" => $parts,
+                    );
+                    if ($this->parent) {
+                        $parentStyleFiles = & $fullStack->getService($this->parent)->styleFiles;
+                        $this->styleFiles[ "parent" ] = array_merge($parentStyleFiles["parent"], $parentStyleFiles["own"]);
+                    } else {
+                        $this->styleFiles[ "parent" ] = array();
+                    }
+                    // TODO: actually compile scss
+                }
             }
         }
 

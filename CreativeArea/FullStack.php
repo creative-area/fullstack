@@ -162,6 +162,28 @@ class FullStack
     }
 
     /**
+     * @param string $className
+     * @return string
+     * @throws Exception
+     */
+    public function serviceForClass($className)
+    {
+        $offset = -strlen($className);
+        foreach ($this->namespaces as $namespace) {
+            $length = strlen($namespace);
+            if (strrpos($className, $namespace, $offset) !== false) {
+                $serviceName = str_replace("\\", "/", substr($className,strlen($namespace)));
+                $testClass = $this->classForService($serviceName);
+                if ($testClass->name !== $className) {
+                    throw new Exception("class $className matches service $serviceName which matches class $testClass->name");
+                }
+                return $serviceName;
+            }
+        }
+        throw new Exception("cannot find service name for class $className");
+    }
+
+    /**
      * @param string $name
      *
      * @throws Exception
@@ -178,14 +200,23 @@ class FullStack
     }
 
     /**
+     * @var FullStack\Service[]
+     */
+    private $serviceMemoryCache = array();
+
+    /**
      * @param  $name
      *
      * @return FullStack\Service
      */
-    public function getService($name)
+    public function &getService($name)
     {
-        return $this->cache === null
-            ? $this->generateService($name)
-            : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateService"));
+        if (!isset($this->serviceMemoryCache[ $name ])) {
+            $this->serviceMemoryCache[ $name ] =
+                $this->cache === null
+                ? $this->generateService($name)
+                : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateService"));
+        }
+        return $this->serviceMemoryCache[ $name ];
     }
 }
