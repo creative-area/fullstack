@@ -16,6 +16,5 @@
     "require": {
         "leafo/scssphp": "0.0.12"
     },
-	"require-dev": {
-	}
+    "require-dev": {}
 }
