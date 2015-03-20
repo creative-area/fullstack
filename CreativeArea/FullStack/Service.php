@@ -59,31 +59,27 @@ class Service
      *
      * @return string
      */
-    public function toJavaScript()
+    public function toScript()
     {
         if ($this->abstract) {
             throw new Exception("cannot generate code for abstract service");
         }
-        function getOrNull(&$array, $key)
-        {
-            return isset($array[$key]) ? $array[$key] : null;
-        }
 
-        return JavaScript::object(array(
+        return Script::object(array(
             "dependencies" => $this->dependencies,
             "instantiate" => $this->instantiate,
-            "code" => JavaScript::object(array(
-                "script" => getOrNull($this->code, "Script"),
-                "style" => getOrNull($this->code, "Style"),
+            "code" => Script::object(array(
+                "script" => Script::createFunction(array(), $this->code["Script"]),
+                "style" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
             )),
-            "properties" => JavaScript::object($this->properties),
-            "iProperties" => JavaScript::object($this->instanceProperties),
-            "methods" => JavaScript::object(array(
-                "post" => JavaScript::createFunction(array("post"),
-                        "return ".JavaScript::object($this->methods[ "Post" ]).";"),
-                "script" => JavaScript::object($this->methods[ "Script" ]),
-                "remote" => JavaScript::createFunction(array("remote"),
-                        "return ".JavaScript::object($this->methods[ "Remote" ]).";"),
+            "properties" => Script::object($this->properties),
+            "iProperties" => Script::object($this->instanceProperties),
+            "methods" => Script::object(array(
+                "post" => Script::createFunction(array("post"),
+                        "return ".Script::object($this->methods[ "Post" ]).";"),
+                "script" => Script::object($this->methods[ "Script" ]),
+                "remote" => Script::createFunction(array("remote"),
+                        "return ".Script::object($this->methods[ "Remote" ]).";"),
             )),
         ));
     }
@@ -155,7 +151,7 @@ class Service
             }
             $code = "";
             if ($type === "Script") {
-                $code = implode(";\n", $parts);
+                $this->code[ $type ] = implode(";\n", $parts);
             } else {
                 $styleFile = preg_replace("/\\.php$/", ".scss", $reflectionClass->getFileName());
                 if (file_exists($styleFile)) {
@@ -172,15 +168,12 @@ class Service
                     } else {
                         $this->styleFiles[ "parent" ] = array();
                     }
-                    $code = Style::compile(
+                    $this->code[ $type ] = Style::compile(
                         $this->styleFiles[ "parent" ],
                         $this->styleFiles[ "own" ],
                         array(&$fullStack, "_getStyle")
                     );
                 }
-            }
-            if ($code) {
-                $this->code[ $type ] = json_encode($code);
             }
         }
 
@@ -225,7 +218,7 @@ class Service
                 $nbParameters = count($parameters);
                 $body = $method->invokeArgs($instance, $nbParameters ? array_fill(0, $nbParameters, null) : array());
                 if ($templateAnnotation) {
-                    $body = JavaScript::compileTemplate($body, $templateAnnotation->normalizeSpace);
+                    $body = Script::compileTemplate($body, $templateAnnotation->normalizeSpace);
                 }
                 $methodsArray = & $this->methods[ "Script" ];
             } elseif ($method->getAnnotation("Post")) {
@@ -239,7 +232,7 @@ class Service
                 $body = "return remote(this, ".json_encode($method->name).", arguments);";
                 $methodsArray = & $this->methods[ "Remote" ];
             }
-            $methodsArray[ $method->name ] = JavaScript::createFunction($args, $body, $method->getAnnotation("Cache"));
+            $methodsArray[ $method->name ] = Script::createFunction($args, $body, $method->getAnnotation("Cache"));
         }
     }
 };

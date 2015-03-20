@@ -1,6 +1,6 @@
 <?php namespace CreativeArea\FullStack;
 
-class JavaScript
+class Script
 {
     /**
      * @param string $block
@@ -36,7 +36,7 @@ class JavaScript
             return;
         }
 
-        return "{\n".JavaScript::indent(implode(",\n", $fields))."\n}";
+        return "{\n".Script::indent(implode(",\n", $fields))."\n}";
     }
 
     /**
@@ -48,9 +48,9 @@ class JavaScript
      */
     private static function _createFunction($args, $body, $withCache)
     {
-        $code = "function($args) {\n".JavaScript::indent(trim($body))."\n}";
+        $code = "function($args) {\n".Script::indent(trim($body))."\n}";
         if ($withCache) {
-            $code = JavaScript::_createFunction(
+            $code = Script::_createFunction(
                 $args,
                 "\n".
                 "var ____fsk = JSON.stringify([$args]);\n".
@@ -58,7 +58,7 @@ class JavaScript
                 "return ____fsc[____fsk];\n",
                 false
             );
-            $code = "(".JavaScript::_createFunction(
+            $code = "(".Script::_createFunction(
                 "",
                 "\n".
                 "var ____fsc = {};\n".
@@ -79,7 +79,7 @@ class JavaScript
      */
     public static function createFunction($args, $body, $withCache = null)
     {
-        return JavaScript::_createFunction(implode(", ", $args), $body, $withCache);
+        return Script::_createFunction(implode(", ", $args), $body, $withCache);
     }
 
     /**
