@@ -16,14 +16,15 @@ $fullStack = (new CreativeArea\FullStack())
     ->scriptPath(__DIR__."/script")
     ->stylePath("style");
 
-$first = $fullStack->getService("First");
+$base = $fullStack->getServiceDescriptor("Base");
+
+echo $base->toScript(true)."\n\n";
+echo json_encode($base, JSON_PRETTY_PRINT)."\n\n";
+
+$first = $fullStack->getServiceDescriptor("First");
 
 echo $first->toScript(true)."\n\n";
-
-$base = $fullStack->getService("Base");
-
 echo json_encode($first, JSON_PRETTY_PRINT)."\n\n";
-echo json_encode($base, JSON_PRETTY_PRINT)."\n\n";
 
 $time = microtime(true) - $time;
 

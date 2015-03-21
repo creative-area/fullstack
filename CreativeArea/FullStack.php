@@ -199,34 +199,34 @@ class FullStack
      *
      * @throws Exception
      *
-     * @return FullStack\Service
+     * @return FullStack\ServiceDescriptor
      */
-    private function &generateService($name)
+    private function &generateServiceDescriptor($name)
     {
         $reflectionClass = & $this->classForService($name);
-        $service = new FullStack\Service();
+        $service = new FullStack\ServiceDescriptor();
         $service->build($reflectionClass, $this);
 
         return $service;
     }
 
     /**
-     * @var FullStack\Service[]
+     * @var FullStack\ServiceDescriptor[]
      */
     private $serviceMemoryCache = array();
 
     /**
      * @param  $name
      *
-     * @return FullStack\Service
+     * @return FullStack\ServiceDescriptor
      */
-    public function &getService($name)
+    public function &getServiceDescriptor($name)
     {
         if (!isset($this->serviceMemoryCache[ $name ])) {
             $this->serviceMemoryCache[ $name ] =
                 $this->cache === null
-                ? $this->generateService($name)
-                : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateService"));
+                ? $this->generateServiceDescriptor($name)
+                : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateServiceDescriptor"));
         }
 
         return $this->serviceMemoryCache[ $name ];

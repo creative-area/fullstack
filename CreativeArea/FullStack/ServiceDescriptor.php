@@ -3,7 +3,7 @@
 /**
  * Class Service.
  */
-class Service
+class ServiceDescriptor
 {
     /**
      * @var bool
@@ -63,29 +63,34 @@ class Service
      */
     public function toScript($minify = false)
     {
-        if ($this->abstract) {
-            throw new Exception("cannot generate code for abstract service");
-        }
+        $code = $this->abstract ?
+            Script::object(array(
+                "abstract" => true,
+                "dependencies" => $this->dependencies,
+                "code" => Script::object(array(
+                    "script" => Script::createFunction(array(), $this->code["Script"]),
+                    "style" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
+                )),
+            )) :
+            Script::object(array(
+                "dependencies" => $this->dependencies,
+                "instantiate" => $this->instantiate,
+                "code" => Script::object(array(
+                    "script" => Script::createFunction(array(), $this->code["Script"]),
+                    "style" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
+                )),
+                "properties" => Script::object($this->properties),
+                "iProperties" => Script::object($this->instanceProperties),
+                "methods" => Script::object(array(
+                    "post" => Script::createFunction(array("post"),
+                            "return ".Script::object($this->methods[ "Post" ]).";"),
+                    "script" => Script::object($this->methods[ "Script" ]),
+                    "remote" => Script::createFunction(array("remote"),
+                            "return ".Script::object($this->methods[ "Remote" ]).";"),
+                )),
+            ));
 
-        $code = Script::object(array(
-            "dependencies" => $this->dependencies,
-            "instantiate" => $this->instantiate,
-            "code" => Script::object(array(
-                "script" => Script::createFunction(array(), $this->code["Script"]),
-                "style" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
-            )),
-            "properties" => Script::object($this->properties),
-            "iProperties" => Script::object($this->instanceProperties),
-            "methods" => Script::object(array(
-                "post" => Script::createFunction(array("post"),
-                        "return ".Script::object($this->methods[ "Post" ]).";"),
-                "script" => Script::object($this->methods[ "Script" ]),
-                "remote" => Script::createFunction(array("remote"),
-                        "return ".Script::object($this->methods[ "Remote" ]).";"),
-            )),
-        ));
-
-        return $minify ? Script::minify($code) : $code;
+        return $minify ? substr(Script::minify("a$code"), 1) : $code;
     }
 
     /**
@@ -167,7 +172,7 @@ class Service
                         "own" => $parts,
                     );
                     if ($this->parent) {
-                        $parentStyleFiles = & $fullStack->getService($this->parent)->styleFiles;
+                        $parentStyleFiles = & $fullStack->getServiceDescriptor($this->parent)->styleFiles;
                         $this->styleFiles[ "parent" ] = array_merge($parentStyleFiles["parent"], $parentStyleFiles["own"]);
                     } else {
                         $this->styleFiles[ "parent" ] = array();
