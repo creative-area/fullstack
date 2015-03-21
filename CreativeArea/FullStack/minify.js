@@ -6,14 +6,7 @@ process.stdin.on("data", function (d) {
 	input.push(d);
 });
 process.stdin.on("end", function () {
-	input = Buffer.concat(input).toString();
-	try {
-		output = minify(input, {
-			fromString: true
-		}).code;
-	} catch( e ) {
-		process.stderr.write( JSON.stringify( e ) );
-		process.exit(1);
-	}
-	process.stdout.write( output );
+	console.log(minify(Buffer.concat(input).toString(), {
+		fromString: true
+	}).code);
 });

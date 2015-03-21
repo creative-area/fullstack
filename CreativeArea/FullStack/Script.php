@@ -15,47 +15,19 @@ class Script
     /**
      * @param string $string
      *
-     * @throws Exception
+     * @throws \CreativeArea\Node\ScriptException
+     * @throws \CreativeArea\Node\Exception
      *
      * @return string
      */
     public static function minify($string)
     {
-        $process = proc_open("node ".__DIR__."/minify.js", array(
-            0 => array("pipe", "r"), // stdin
-            1 => array("pipe", "w"), // stdout
-            2 => array("pipe", "w"), // stderr
-        ), $pipes, __DIR__);
-
-        if (is_resource($process)) {
-            fwrite($pipes[0], $string);
-            fclose($pipes[0]);
-
-            $output = stream_get_contents($pipes[1]);
-            fclose($pipes[1]);
-
-            $error = stream_get_contents($pipes[2]);
-            fclose($pipes[2]);
-
-            proc_close($process);
-
-            if ($error) {
-                try {
-                    $info = json_decode($error);
-                    $json_error = json_last_error();
-                } catch (\Exception $e) {
-                    $json_error = true;
-                }
-                if ($json_error) {
-                    throw new Exception($error);
-                }
-                // TODO: some kind of source map
-                throw new Exception($info->message);
-            }
-
-            return $output;
+        static $node = null;
+        if ($node === null) {
+            $node = new \CreativeArea\Node();
         }
-        throw new Exception("cannot open process and use minify");
+
+        return $node->exec(__DIR__."/minify.js", array(), $string)->stdout;
     }
 
     /**

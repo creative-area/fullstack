@@ -38,7 +38,7 @@ class First extends Base
      * @Script
      * @Cache
      */
-    public function double($nb)
+    public function twice($nb)
     {
         return '
         return $nb * 2;
@@ -50,7 +50,7 @@ class First extends Base
      *
      * @return mixed
      */
-    public function remoteDouble($nb)
+    public function remoteTwice($nb)
     {
         return $nb * 2;
     }

@@ -1,5 +1,7 @@
 <?php
 
+ini_set("html_errors", false);
+
 set_include_path(implode(PATH_SEPARATOR, array(get_include_path(), __DIR__."/..")));
 spl_autoload_register();
 
