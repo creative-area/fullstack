@@ -18,7 +18,7 @@ abstract class Object implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $map = array();
+        $map = [];
         if ($this->____fs) { // was provided remotely
             $reflectionClass = & Engine::$current->classForName($this->____fs[ "type" ]);
             foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC) as &$property) {
@@ -28,9 +28,9 @@ abstract class Object implements \JsonSerializable
                 }
             }
         } else { // was constructed during this call
-            $this->____fs = array(
+            $this->____fs = [
                 "type" => Engine::$current->nameForClass(get_class($this)),
-            );
+            ];
             $reflectionClass = & Engine::$current->classForName($this->____fs[ "type" ]);
             foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC) as &$property) {
                 if (!$property->isStatic() && $property->getAnnotation("Instance")) {

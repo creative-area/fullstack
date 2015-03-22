@@ -79,9 +79,9 @@ class ReflectionClass extends \ReflectionClass
      */
     public function getMethods($filter = -1)
     {
-        static $cache = array();
+        static $cache = [];
         if (!isset($cache[ $filter ])) {
-            $methods = array();
+            $methods = [];
             foreach (parent::getMethods($filter) as $method) {
                 $methods[] = & $this->getMethod($method->name);
             }
@@ -98,9 +98,9 @@ class ReflectionClass extends \ReflectionClass
      */
     public function getProperties($filter = -1)
     {
-        static $cache = array();
+        static $cache = [];
         if (!isset($cache[ $filter ])) {
-            $properties = array();
+            $properties = [];
             foreach (parent::getProperties($filter) as $property) {
                 $properties[] = & $this->getProperty($property->name);
             }
@@ -117,7 +117,7 @@ class ReflectionClass extends \ReflectionClass
     {
         static $interfaces;
         if (!$interfaces) {
-            $interfaces = array();
+            $interfaces = [];
             foreach (parent::getInterfaceNames() as $interfaceName) {
                 $interfaces[] = & $this->annotate->getClass($interfaceName);
             }

@@ -18,12 +18,12 @@ class Descriptor
     /**
      * @var string[]
      */
-    public $code = array();
+    public $code = [];
 
     /**
      * @var string[][]
      */
-    public $styleFiles = array();
+    public $styleFiles = [];
 
     /**
      * @var null|string[]
@@ -33,12 +33,12 @@ class Descriptor
     /**
      * @var array
      */
-    public $properties = array();
+    public $properties = [];
 
     /**
      * @var bool[]
      */
-    public $instanceProperties = array();
+    public $instanceProperties = [];
 
     /**
      * @var bool
@@ -48,11 +48,11 @@ class Descriptor
     /**
      * @var string[][]
      */
-    public $methods = array(
-        "Post" => array(),
-        "Script" => array(),
-        "Remote" => array(),
-    );
+    public $methods = [
+        "Post" => [],
+        "Script" => [],
+        "Remote" => [],
+    ];
 
     /**
      * @return string
@@ -60,31 +60,31 @@ class Descriptor
     public function toScript()
     {
         return $this->abstract ?
-            Script::object(array(
+            Script::object([
                 "abstract" => true,
                 "dependencies" => $this->dependencies,
-                "code" => Script::object(array(
-                    "script" => Script::createFunction(array(), $this->code["Script"]),
+                "code" => Script::object([
+                    "script" => Script::createFunction([], $this->code["Script"]),
                     "style" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
-                )),
-            )) :
-            Script::object(array(
+                ]),
+            ]) :
+            Script::object([
                 "dependencies" => $this->dependencies,
                 "instantiate" => $this->instantiate,
-                "code" => Script::object(array(
-                    "script" => Script::createFunction(array(), $this->code["Script"]),
+                "code" => Script::object([
+                    "script" => Script::createFunction([], $this->code["Script"]),
                     "style" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
-                )),
+                ]),
                 "properties" => Script::object($this->properties),
                 "iProperties" => Script::object($this->instanceProperties),
-                "methods" => Script::object(array(
-                    "post" => Script::createFunction(array("post"),
+                "methods" => Script::object([
+                    "post" => Script::createFunction(["post"],
                             "return ".Script::object($this->methods[ "Post" ]).";"),
                     "script" => Script::object($this->methods[ "Script" ]),
-                    "remote" => Script::createFunction(array("remote"),
+                    "remote" => Script::createFunction(["remote"],
                             "return ".Script::object($this->methods[ "Remote" ]).";"),
-                )),
-            ));
+                ]),
+            ]);
     }
 
     /**
@@ -103,13 +103,13 @@ class Descriptor
             throw new Exception("class 'CreativeArea\\FullStack\\Object' cannot be described");
         }
 
-        $methodsToIgnore = array(
+        $methodsToIgnore = [
             "__construct" => true,
             "__construct_service" => true,
             "__construct_instance" => true,
             "__construct_execution" => true,
             "jsonSerialize" => true,
-        );
+        ];
 
         if ($reflectionClass->isAbstract()) {
             $this->abstract = true;
@@ -133,9 +133,9 @@ class Descriptor
         $this->dependencies = $reflectionClass->getAnnotation("DependsOn");
 
         // CODE
-        foreach (array("Script", "Style") as $type) {
+        foreach (["Script", "Style"] as $type) {
             $list = $reflectionClass->getAnnotation($type);
-            $parts = array();
+            $parts = [];
             if ($list) {
                 $method = $type === "Script" ? "getScript" : "getStyle";
                 foreach ($list as $filename) {
@@ -167,20 +167,20 @@ class Descriptor
                     $parts[] = $styleFile;
                 }
                 if (count($parts)) {
-                    $this->styleFiles = array(
-                        "parent" => array(),
+                    $this->styleFiles = [
+                        "parent" => [],
                         "own" => $parts,
-                    );
+                    ];
                     if ($this->parent) {
                         $parentStyleFiles = & $engine->getDescriptor($this->parent)->styleFiles;
                         $this->styleFiles[ "parent" ] = array_merge($parentStyleFiles["parent"], $parentStyleFiles["own"]);
                     } else {
-                        $this->styleFiles[ "parent" ] = array();
+                        $this->styleFiles[ "parent" ] = [];
                     }
                     $this->code[ $type ] = Style::compile(
                         $this->styleFiles[ "parent" ],
                         $this->styleFiles[ "own" ],
-                        array(&$engine, "getStyle")
+                        [&$engine, "getStyle"]
                     );
                 }
             }
@@ -225,13 +225,13 @@ class Descriptor
                    return $parameter->name;
                 }, $parameters);
                 $nbParameters = count($parameters);
-                $body = $method->invokeArgs($instance, $nbParameters ? array_fill(0, $nbParameters, null) : array());
+                $body = $method->invokeArgs($instance, $nbParameters ? array_fill(0, $nbParameters, null) : []);
                 if ($templateAnnotation) {
                     $body = Script::compileTemplate($body, $templateAnnotation->normalizeSpace);
                 }
                 $methodsArray = & $this->methods[ "Script" ];
             } elseif ($method->getAnnotation("Post")) {
-                $args = array("form");
+                $args = ["form"];
                 $body = "return post(this, ".json_encode($method->name).", form);";
                 $methodsArray = & $this->methods[ "Post" ];
             } else {

@@ -8,7 +8,7 @@ class FileFinder
     /**
      * @var string[]
      */
-    public $path = array();
+    public $path = [];
 
     /**
      * @param string $path
@@ -96,7 +96,7 @@ class FileFinder
      */
     public function content($fileName)
     {
-        return $this->find($fileName, array(get_class($this), "read"));
+        return $this->find($fileName, [get_class($this), "read"]);
     }
 
     /**

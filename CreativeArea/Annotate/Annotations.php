@@ -5,19 +5,19 @@
  */
 class Annotations
 {
-    public static $definitionTypes = array(
+    public static $definitionTypes = [
         "bool" => "boolean",
         "boolean" => "boolean",
         "flag" => "boolean",
         "object" => "object",
         "string" => "string",
         "string[]" => "array_of_strings",
-    );
+    ];
 
     /**
      * @var array
      */
-    private $cache = array();
+    private $cache = [];
 
     /**
      * @param string           $comment
@@ -28,7 +28,7 @@ class Annotations
     public function __construct($comment, &$definitions)
     {
         if ($comment) {
-            $matches = array();
+            $matches = [];
             preg_match_all(
                 '/@([A-Z][a-zA-Z0-9]*)((?:[^"\)\n]|(?:"(?:\\"|[^"\n])*"))*)/',
                 $comment,
@@ -96,7 +96,7 @@ class Annotations
      *
      * @throws Exception
      */
-    private function add_object($type, $value, &$default = array())
+    private function add_object($type, $value, &$default = [])
     {
         if (isset($this->cache[ $type ])) {
             throw new Exception("annotation $type cannot be used twice");
@@ -141,13 +141,13 @@ class Annotations
     private function add_array_of_strings($type, $value)
     {
         if (is_string($value)) {
-            $value = array( $value );
+            $value = [ $value ];
         }
         if (!is_array($value)) {
             throw new Exception("annotation $type only accepts a string or a list of strings");
         }
         if (!isset($this->cache[ $type ])) {
-            $this->cache[ $type ] = array();
+            $this->cache[ $type ] = [];
         }
         foreach ($value as $string) {
             if (!is_string($string)) {

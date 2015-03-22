@@ -8,7 +8,7 @@ class Annotate
     /**
      * @var array
      */
-    private $cache = array();
+    private $cache = [];
 
     /**
      * @var (string|array)[][]
@@ -32,7 +32,7 @@ class Annotate
      */
     public function getAnnotations(&$reflector)
     {
-        $tmp = array();
+        $tmp = [];
         $className = get_class($reflector);
         if (!preg_match("/(Class|Method|Property)$/", $className, $tmp)) {
             throw new Annotate\Exception("Cannot get annotations for a parameter of class '$className'");

@@ -30,7 +30,7 @@ class Script
             $node = new \CreativeArea\Node();
         }
 
-        return $node->exec(__DIR__."/minify.js", array(), $string)->stdout;
+        return $node->exec(__DIR__."/minify.js", [], $string)->stdout;
     }
 
     /**
@@ -43,7 +43,7 @@ class Script
         if (!is_array($input) || !count($input)) {
             return;
         }
-        $fields = array();
+        $fields = [];
         foreach ($input as $key => $value) {
             if (!$value) {
                 continue;
@@ -112,9 +112,9 @@ class Script
     public static function compileTemplate($template, $normalizeSpace)
     {
         $var = "__fss";
-        $code = array("var $var = [];");
+        $code = ["var $var = [];"];
         $split = preg_split("/<%|%>/", $template);
-        $currentString = array();
+        $currentString = [];
         $isJavascript = true;
         foreach ($split as $part) {
             $isJavascript = !$isJavascript;
@@ -129,7 +129,7 @@ class Script
                         array_push($code, "$var.push(".implode(",", $currentString).");");
                     }
                     array_push($code, trim($part));
-                    $currentString = array();
+                    $currentString = [];
                 }
             } elseif ($part != "") {
                 if ($normalizeSpace) {

@@ -28,15 +28,15 @@ class Node
      * @throws Node\ScriptException
      * @throws Node\Exception
      */
-    public function exec($script, $args = array(), $input = "")
+    public function exec($script, $args = [], $input = "")
     {
         $command = $this->command." ".escapeshellcmd($script)." ".implode(" ", array_map("escapeshellcmd", $args));
 
-        $process = proc_open($command, array(
-            0 => array("pipe", "r"), // stdin
-            1 => array("pipe", "w"), // stdout
-            2 => array("pipe", "w"), // stderr
-        ), $pipes, __DIR__);
+        $process = proc_open($command, [
+            0 => ["pipe", "r"], // stdin
+            1 => ["pipe", "w"], // stdout
+            2 => ["pipe", "w"], // stderr
+        ], $pipes, __DIR__);
 
         if (is_resource($process)) {
             fwrite($pipes[0], $input);

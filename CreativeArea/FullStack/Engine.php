@@ -13,24 +13,24 @@ class Engine
     /**
      * @var array
      */
-    public static $annotations = array(
-        "Class" => array(
+    public static $annotations = [
+        "Class" => [
             "DependsOn" => "string[]",
             "Script" => "string[]",
             "Style" => "string[]",
-        ),
-        "Method" => array(
+        ],
+        "Method" => [
             "Cache" => "flag",
             "Post" => "flag",
             "Script" => "flag",
             "Template" => "flag",
-        ),
-        "Property" => array(
+        ],
+        "Property" => [
             "Instance" => "flag",
             "Raw" => "flag",
             "Synchronize" => "flag",
-        ),
-    );
+        ],
+    ];
 
     /**
      * @var \CreativeArea\Annotate
@@ -40,7 +40,7 @@ class Engine
     /**
      * @var string[]
      */
-    public $namespaces = array();
+    public $namespaces = [];
 
     /**
      * @var \CreativeArea\Storage\Cache|null
@@ -185,7 +185,7 @@ class Engine
     /**
      * @var Descriptor[]
      */
-    public $descriptorMemoryCache = array();
+    public $descriptorMemoryCache = [];
 
     /**
      * @param  $name
@@ -204,7 +204,7 @@ class Engine
             $this->descriptorMemoryCache[ $name ] =
                 $this->cache === null
                 ? $this->generateDescriptor($name)
-                : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateDescriptor"));
+                : $this->cache->getOrCreate($name, $this->version, [&$this, "generateDescriptor"]);
         }
 
         return $this->descriptorMemoryCache[ $name ];

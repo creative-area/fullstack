@@ -32,7 +32,7 @@ class Style
     public static function compile(&$parent, &$own, $includeCallback)
     {
         $scss = new \scssc();
-        $scss->setImportPaths(array("", $includeCallback));
+        $scss->setImportPaths(["", $includeCallback]);
         $scss->setFormatter("scss_formatter_compressed");
         $compiled = $scss->compile(
             Style::filesToImport($parent).
