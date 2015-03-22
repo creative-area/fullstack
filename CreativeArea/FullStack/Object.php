@@ -6,11 +6,6 @@
 abstract class Object implements \JsonSerializable
 {
     /**
-     * @var \CreativeArea\FullStack|null
-     */
-    public static $____fsFS = null;
-
-    /**
      * @Instance
      * @Synchronize
      *
@@ -25,7 +20,7 @@ abstract class Object implements \JsonSerializable
     {
         $map = array();
         if ($this->____fs) { // was provided remotely
-            $reflectionClass = & Object::$____fsFS->classForName($this->____fs[ "type" ]);
+            $reflectionClass = & Engine::$current->classForName($this->____fs[ "type" ]);
             foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC) as &$property) {
                 if (!$property->isStatic() && $property->getAnnotation("Synchronize")) {
                     $name = $property->name;
@@ -34,9 +29,9 @@ abstract class Object implements \JsonSerializable
             }
         } else { // was constructed during this call
             $this->____fs = array(
-                "type" => Object::$____fsFS->nameForClass(get_class($this)),
+                "type" => Engine::$current->nameForClass(get_class($this)),
             );
-            $reflectionClass = & Object::$____fsFS->classForName($this->____fs[ "type" ]);
+            $reflectionClass = & Engine::$current->classForName($this->____fs[ "type" ]);
             foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC) as &$property) {
                 if (!$property->isStatic() && $property->getAnnotation("Instance")) {
                     $name = $property->name;

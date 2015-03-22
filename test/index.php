@@ -11,7 +11,7 @@ header("Content-Type: text/plain");
 
 $time = microtime(true);
 
-$fullStack = (new CreativeArea\FullStack())
+$fullStack = (new CreativeArea\FullStack\Engine())
     ->using("Service")
     ->scriptPath(__DIR__."/script")
     ->stylePath("style");
@@ -29,7 +29,7 @@ echo json_encode($first, JSON_PRETTY_PRINT)."\n\n";
 $firstInstance = new Service\First();
 $firstInstance->__construct_instance();
 
-CreativeArea\FullStack\Object::$____fsFS = & $fullStack;
+CreativeArea\FullStack\Engine::$current = & $fullStack;
 $firstInstanceEncoded = json_encode($firstInstance, JSON_PRETTY_PRINT);
 echo "$firstInstanceEncoded\n\n";
 

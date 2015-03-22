@@ -89,11 +89,11 @@ class Descriptor
 
     /**
      * @param \CreativeArea\Annotate\ReflectionClass $reflectionClass
-     * @param \CreativeArea\FullStack                $fullStack
+     * @param \CreativeArea\FullStack\Engine         $engine
      *
      * @throws Exception
      */
-    public function build(&$reflectionClass, &$fullStack)
+    public function build(&$reflectionClass, &$engine)
     {
         if (!$reflectionClass->isSubclassOf("CreativeArea\\FullStack\\Object")) {
             throw new Exception("class '$reflectionClass->name' is not a service (it does not inherit from CreativeArea\\FullStack\\Object)");
@@ -126,7 +126,7 @@ class Descriptor
         if ($parentClass->name === "CreativeArea\\FullStack\\Object") {
             $parentClass = null;
         } else {
-            $this->parent = $fullStack->nameForClass($parentClass->name);
+            $this->parent = $engine->nameForClass($parentClass->name);
         }
 
         // DEPENDENCIES
@@ -137,7 +137,7 @@ class Descriptor
             $list = $reflectionClass->getAnnotation($type);
             $parts = array();
             if ($list) {
-                $method = $type === "Script" ? "_getScript" : "_getStyle";
+                $method = $type === "Script" ? "getScript" : "getStyle";
                 foreach ($list as $filename) {
                     if (preg_match("/^->/", $filename)) {
                         $methodName = substr($filename, 2);
@@ -155,7 +155,7 @@ class Descriptor
                         $methodsToIgnore[ $methodName ] = true;
                         $filename = $method->invoke($instance);
                     }
-                    $parts[] = $fullStack->$method($filename);
+                    $parts[] = $engine->$method($filename);
                 }
             }
             $code = "";
@@ -172,7 +172,7 @@ class Descriptor
                         "own" => $parts,
                     );
                     if ($this->parent) {
-                        $parentStyleFiles = & $fullStack->getDescriptor($this->parent)->styleFiles;
+                        $parentStyleFiles = & $engine->getDescriptor($this->parent)->styleFiles;
                         $this->styleFiles[ "parent" ] = array_merge($parentStyleFiles["parent"], $parentStyleFiles["own"]);
                     } else {
                         $this->styleFiles[ "parent" ] = array();
@@ -180,7 +180,7 @@ class Descriptor
                     $this->code[ $type ] = Style::compile(
                         $this->styleFiles[ "parent" ],
                         $this->styleFiles[ "own" ],
-                        array(&$fullStack, "_getStyle")
+                        array(&$engine, "getStyle")
                     );
                 }
             }

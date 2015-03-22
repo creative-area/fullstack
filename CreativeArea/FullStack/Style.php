@@ -36,10 +36,10 @@ class Style
         $scss->setFormatter("scss_formatter_compressed");
         $compiled = $scss->compile(
             Style::filesToImport($parent).
-            ".marker{----fullstack:0}\n".
+            ".marker{----fs:0}\n".
             Style::filesToImport($own)
         );
 
-        return preg_replace("/^.*----fullstack[^}]+}/", "", $compiled);
+        return preg_replace("/^.*----fs[^}]+}/", "", $compiled);
     }
 }

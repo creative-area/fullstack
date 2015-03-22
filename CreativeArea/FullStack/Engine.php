@@ -1,14 +1,19 @@
-<?php namespace CreativeArea;
+<?php namespace CreativeArea\FullStack;
 
 /**
- * Class FullStack.
+ * Class Internal.
  */
-class FullStack
+class Engine
 {
+    /**
+     * @var Engine|null
+     */
+    public static $current = null;
+
     /**
      * @var array
      */
-    private static $annotations = array(
+    public static $annotations = array(
         "Class" => array(
             "DependsOn" => "string[]",
             "Script" => "string[]",
@@ -55,36 +60,36 @@ class FullStack
     }
 
     /**
-     * @var Annotate
+     * @var \CreativeArea\Annotate
      */
-    private $annotate;
+    public $annotate;
 
     /**
      * @var string[]
      */
-    private $namespaces = array();
+    public $namespaces = array();
 
     /**
-     * @var Storage\Cache|null
+     * @var \CreativeArea\Storage\Cache|null
      */
-    private $cache = null;
+    public $cache = null;
 
     /**
      * @var int
      */
-    private $version = 0;
+    public $version = 0;
 
     /**
-     * @var FileFinder[]
+     * @var \CreativeArea\FileFinder[]
      */
-    private $fileFinders;
+    public $fileFinders;
 
     public function __construct()
     {
-        $this->annotate = new Annotate(FullStack::$annotations);
+        $this->annotate = new \CreativeArea\Annotate(Engine::$annotations);
         $this->fileFinders = array(
-            "Script" => new FileFinder(),
-            "Style" => new FileFinder(),
+            "script" => new \CreativeArea\FileFinder(),
+            "style" => new \CreativeArea\FileFinder(),
         );
     }
 
@@ -107,7 +112,7 @@ class FullStack
      */
     public function scriptPath($path)
     {
-        $this->fileFinders[ "Script" ]->addPath($path, 1);
+        $this->fileFinders[ "script" ]->addPath($path, 1);
 
         return $this;
     }
@@ -117,13 +122,13 @@ class FullStack
      *
      * @return string
      */
-    public function _getScript($path)
+    public function getScript($path)
     {
         if (!preg_match("/\\.js$/", $path)) {
             $path = "$path.js";
         }
 
-        return $this->fileFinders[ "Script" ]->content($path);
+        return $this->fileFinders[ "script" ]->content($path);
     }
 
     /**
@@ -133,7 +138,7 @@ class FullStack
      */
     public function stylePath($path)
     {
-        $this->fileFinders[ "Style" ]->addPath($path, 1);
+        $this->fileFinders[ "style" ]->addPath($path, 1);
 
         return $this;
     }
@@ -143,23 +148,23 @@ class FullStack
      *
      * @return string
      */
-    public function _getStyle($path)
+    public function getStyle($path)
     {
         if (!preg_match("/\\.scss$/", $path)) {
             $path = "$path.scss";
         }
 
-        return $this->fileFinders[ "Style" ]->exists($path);
+        return $this->fileFinders[ "style" ]->exists($path);
     }
 
     /**
-     * @param Storage $storage
+     * @param \CreativeArea\Storage $storage
      *
      * @return $this
      */
     public function storage(&$storage)
     {
-        $this->cache = $storage === null ? null : new Storage\Cache($storage);
+        $this->cache = $storage === null ? null : new \CreativeArea\Storage\Cache($storage);
 
         return $this;
     }
@@ -179,7 +184,7 @@ class FullStack
     /**
      * @param string $name
      *
-     * @return Annotate\ReflectionClass
+     * @return \CreativeArea\Annotate\ReflectionClass
      *
      * @throws Exception
      */
@@ -189,10 +194,10 @@ class FullStack
         foreach ($this->namespaces as $namespace) {
             try {
                 return $this->annotate->getClass($namespace.$path);
-            } catch (ReflectionException $e) {
+            } catch (\ReflectionException $e) {
             }
         }
-        throw new FullStack\Exception("Cannot find class for service $name");
+        throw new Exception("Cannot find class for service $name");
     }
 
     /**
@@ -225,33 +230,33 @@ class FullStack
      *
      * @throws Exception
      *
-     * @return FullStack\Descriptor
+     * @return Descriptor
      */
-    private function &generateDescriptor($name)
+    public function &generateDescriptor($name)
     {
         $reflectionClass = & $this->classForName($name);
-        $service = new FullStack\Descriptor();
+        $service = new Descriptor();
         $service->build($reflectionClass, $this);
 
         return $service;
     }
 
     /**
-     * @var FullStack\Descriptor[]
+     * @var Descriptor[]
      */
-    private $descriptorMemoryCache = array();
+    public $descriptorMemoryCache = array();
 
     /**
      * @param  $name
      *
-     * @return FullStack\Descriptor
+     * @return Descriptor
      */
     public function &getDescriptor($name)
     {
         static $dummy = null;
         if ($dummy === null) {
             // Needed to load the class before attempting to de-serialize
-            $dummy = new FullStack\Descriptor();
+            $dummy = new Descriptor();
         }
 
         if (!isset($this->descriptorMemoryCache[ $name ])) {
