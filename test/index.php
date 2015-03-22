@@ -11,17 +11,17 @@ header("Content-Type: text/plain");
 
 $time = microtime(true);
 
-$fullStack = (new CreativeArea\FullStack\Engine())
+$fullStack = (new CreativeArea\FullStack())
     ->using("Service")
     ->scriptPath(__DIR__."/script")
     ->stylePath("style");
 
-$base = $fullStack->getDescriptor("Base");
+$base = $fullStack->engine->getDescriptor("Base");
 
 echo $base->toScript()."\n\n";
 echo json_encode($base, JSON_PRETTY_PRINT)."\n\n";
 
-$first = $fullStack->getDescriptor("First");
+$first = $fullStack->engine->getDescriptor("First");
 
 echo $first->toScript()."\n\n";
 echo json_encode($first, JSON_PRETTY_PRINT)."\n\n";
@@ -29,7 +29,7 @@ echo json_encode($first, JSON_PRETTY_PRINT)."\n\n";
 $firstInstance = new Service\First();
 $firstInstance->__construct_instance();
 
-CreativeArea\FullStack\Engine::$current = & $fullStack;
+CreativeArea\FullStack\Engine::$current = & $fullStack->engine;
 $firstInstanceEncoded = json_encode($firstInstance, JSON_PRETTY_PRINT);
 echo "$firstInstanceEncoded\n\n";
 
@@ -39,7 +39,7 @@ var_dump($decoded);
 
 $set = [$decoded];
 
-$fullStack->findAndConstructObjects($set);
+$fullStack->engine->findAndConstructObjects($set);
 
 var_dump($set[0]);
 

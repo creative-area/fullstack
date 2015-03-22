@@ -1,7 +1,7 @@
 <?php namespace CreativeArea\FullStack;
 
 /**
- * Class Internal.
+ * Class Engine.
  */
 class Engine
 {
@@ -33,6 +33,43 @@ class Engine
     );
 
     /**
+     * @var \CreativeArea\Annotate
+     */
+    public $annotate;
+
+    /**
+     * @var string[]
+     */
+    public $namespaces = array();
+
+    /**
+     * @var \CreativeArea\Storage\Cache|null
+     */
+    public $cache = null;
+
+    /**
+     * @var int
+     */
+    public $version = 0;
+
+    /**
+     * @var \CreativeArea\FileFinder
+     */
+    public $scriptFileFinder;
+
+    /**
+     * @var \CreativeArea\FileFinder
+     */
+    public $styleFileFinder;
+
+    public function __construct()
+    {
+        $this->annotate = new \CreativeArea\Annotate(Engine::$annotations);
+        $this->scriptFileFinder = new \CreativeArea\FileFinder();
+        $this->styleFileFinder = new \CreativeArea\FileFinder();
+    }
+
+    /**
      * @param mixed $set
      *
      * @return mixed
@@ -60,64 +97,6 @@ class Engine
     }
 
     /**
-     * @var \CreativeArea\Annotate
-     */
-    public $annotate;
-
-    /**
-     * @var string[]
-     */
-    public $namespaces = array();
-
-    /**
-     * @var \CreativeArea\Storage\Cache|null
-     */
-    public $cache = null;
-
-    /**
-     * @var int
-     */
-    public $version = 0;
-
-    /**
-     * @var \CreativeArea\FileFinder[]
-     */
-    public $fileFinders;
-
-    public function __construct()
-    {
-        $this->annotate = new \CreativeArea\Annotate(Engine::$annotations);
-        $this->fileFinders = array(
-            "script" => new \CreativeArea\FileFinder(),
-            "style" => new \CreativeArea\FileFinder(),
-        );
-    }
-
-    /**
-     * @param string $namespace
-     *
-     * @return $this
-     */
-    public function using($namespace)
-    {
-        array_unshift($this->namespaces, preg_replace("/\\\\?$/", "\\", $namespace));
-
-        return $this;
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function scriptPath($path)
-    {
-        $this->fileFinders[ "script" ]->addPath($path, 1);
-
-        return $this;
-    }
-
-    /**
      * @param $path
      *
      * @return string
@@ -128,19 +107,7 @@ class Engine
             $path = "$path.js";
         }
 
-        return $this->fileFinders[ "script" ]->content($path);
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function stylePath($path)
-    {
-        $this->fileFinders[ "style" ]->addPath($path, 1);
-
-        return $this;
+        return $this->scriptFileFinder->content($path);
     }
 
     /**
@@ -154,31 +121,7 @@ class Engine
             $path = "$path.scss";
         }
 
-        return $this->fileFinders[ "style" ]->exists($path);
-    }
-
-    /**
-     * @param \CreativeArea\Storage $storage
-     *
-     * @return $this
-     */
-    public function storage(&$storage)
-    {
-        $this->cache = $storage === null ? null : new \CreativeArea\Storage\Cache($storage);
-
-        return $this;
-    }
-
-    /**
-     * @param int $version
-     *
-     * @return $this
-     */
-    public function version($version)
-    {
-        $this->version = $version;
-
-        return $this;
+        return $this->styleFileFinder->exists($path);
     }
 
     /**
