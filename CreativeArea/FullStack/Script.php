@@ -123,27 +123,27 @@ class Script
                 $isExpression = (substr($part, 0, 1) == "=");
 
                 if ($isExpression) {
-                    array_push($currentString, "(".trim(substr($part, 1)).")");
+                    $currentString[] = "(".trim(substr($part, 1)).")";
                 } else {
                     if ($count>0) {
-                        array_push($code, "$var.push(".implode(",", $currentString).");");
+                        $code[] = "$var.push(".implode(",", $currentString).");";
                     }
-                    array_push($code, trim($part));
+                    $code[] = trim($part);
                     $currentString = [];
                 }
             } elseif ($part != "") {
                 if ($normalizeSpace) {
                     $part = preg_replace("/\s+/", " ", $part);
                 }
-                array_push($currentString, json_encode($part));
+                $currentString[] = json_encode($part);
             }
         }
 
         $count = count($currentString);
         if ($count>0) {
-            array_push($code, "$var.push(".implode(",", $currentString).");");
+            $code[] = "$var.push(".implode(",", $currentString).");";
         }
-        array_push($code, "return $var.join('');");
+        $code[] = "return $var.join('');";
 
         return implode("\n", $code);
     }
