@@ -15,6 +15,11 @@ class Cache
      */
     public function __construct(&$storage)
     {
+        static $dummy = null;
+        if ($dummy === null) {
+            // Needed to load the class before attempting to de-serialize
+            $dummy = new Cache\Entry();
+        }
         $this->storage = & $storage;
     }
 
@@ -43,6 +48,3 @@ class Cache
         return $entry->value;
     }
 }
-
-// Needed to load the classes before attempting to de-serialize
-new Cache\Entry();

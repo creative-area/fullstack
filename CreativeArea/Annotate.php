@@ -1,5 +1,8 @@
 <?php namespace CreativeArea;
 
+/**
+ * Class Annotate.
+ */
 class Annotate
 {
     /**

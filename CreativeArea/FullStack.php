@@ -11,7 +11,6 @@ class FullStack
     private static $annotations = array(
         "Class" => array(
             "DependsOn" => "string[]",
-            "Service" => "flag",
             "Script" => "string[]",
             "Style" => "string[]",
         ),
@@ -27,6 +26,33 @@ class FullStack
             "Synchronize" => "flag",
         ),
     );
+
+    /**
+     * @param mixed $set
+     *
+     * @return mixed
+     */
+    public function findAndConstructObjects(&$set)
+    {
+        foreach ($set as $key => &$item) {
+            if (is_array($item)) {
+                if (isset($item[ "____fs" ])) {
+                    $marker = & $item[ "____fs" ];
+                    $reflectionClass = & $this->classForName($marker[ "type" ]);
+                    unset($item[ "____fs" ]);
+                    $this->findAndConstructObjects($item);
+                    $object = $reflectionClass->newInstance();
+                    $object->____fs = & $marker;
+                    foreach ($item as $name => &$value) {
+                        $object->$name = & $value;
+                    }
+                    $set[ $key ] = & $object;
+                } else {
+                    $this->findAndConstructObjects($item);
+                }
+            }
+        }
+    }
 
     /**
      * @var Annotate
@@ -157,7 +183,7 @@ class FullStack
      *
      * @throws Exception
      */
-    private function &classForService($name)
+    public function &classForName($name)
     {
         $path = str_replace("/", "\\", $name);
         foreach ($this->namespaces as $namespace) {
@@ -176,14 +202,14 @@ class FullStack
      *
      * @throws Exception
      */
-    public function serviceForClass($className)
+    public function nameForClass($className)
     {
         $offset = -strlen($className);
         foreach ($this->namespaces as $namespace) {
             $length = strlen($namespace);
             if (strrpos($className, $namespace, $offset) !== false) {
                 $serviceName = str_replace("\\", "/", substr($className, strlen($namespace)));
-                $testClass = $this->classForService($serviceName);
+                $testClass = $this->classForName($serviceName);
                 if ($testClass->name !== $className) {
                     throw new Exception("class $className matches service $serviceName which matches class $testClass->name");
                 }
@@ -199,36 +225,42 @@ class FullStack
      *
      * @throws Exception
      *
-     * @return FullStack\ServiceDescriptor
+     * @return FullStack\Descriptor
      */
-    private function &generateServiceDescriptor($name)
+    private function &generateDescriptor($name)
     {
-        $reflectionClass = & $this->classForService($name);
-        $service = new FullStack\ServiceDescriptor();
+        $reflectionClass = & $this->classForName($name);
+        $service = new FullStack\Descriptor();
         $service->build($reflectionClass, $this);
 
         return $service;
     }
 
     /**
-     * @var FullStack\ServiceDescriptor[]
+     * @var FullStack\Descriptor[]
      */
-    private $serviceMemoryCache = array();
+    private $descriptorMemoryCache = array();
 
     /**
      * @param  $name
      *
-     * @return FullStack\ServiceDescriptor
+     * @return FullStack\Descriptor
      */
-    public function &getServiceDescriptor($name)
+    public function &getDescriptor($name)
     {
-        if (!isset($this->serviceMemoryCache[ $name ])) {
-            $this->serviceMemoryCache[ $name ] =
-                $this->cache === null
-                ? $this->generateServiceDescriptor($name)
-                : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateServiceDescriptor"));
+        static $dummy = null;
+        if ($dummy === null) {
+            // Needed to load the class before attempting to de-serialize
+            $dummy = new FullStack\Descriptor();
         }
 
-        return $this->serviceMemoryCache[ $name ];
+        if (!isset($this->descriptorMemoryCache[ $name ])) {
+            $this->descriptorMemoryCache[ $name ] =
+                $this->cache === null
+                ? $this->generateDescriptor($name)
+                : $this->cache->getOrCreate($name, $this->version, array(&$this, "generateDescriptor"));
+        }
+
+        return $this->descriptorMemoryCache[ $name ];
     }
 }

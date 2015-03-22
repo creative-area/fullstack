@@ -1,5 +1,8 @@
 <?php namespace CreativeArea\FullStack;
 
+/**
+ * Class Style.
+ */
 class Style
 {
     /**

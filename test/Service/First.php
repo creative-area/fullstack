@@ -3,8 +3,6 @@
 /**
  * Class First.
  *
- * @Service
- *
  * @Script first.js
  * @Style first.scss
  */
@@ -12,10 +10,11 @@ class First extends Base
 {
     /**
      * @var bool
+     * @Instance
      */
     public $constructServiceCalled = false;
 
-    public function __construct_service()
+    public function __construct_instance()
     {
         $this->constructServiceCalled = true;
     }

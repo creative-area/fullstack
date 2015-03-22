@@ -16,15 +16,32 @@ $fullStack = (new CreativeArea\FullStack())
     ->scriptPath(__DIR__."/script")
     ->stylePath("style");
 
-$base = $fullStack->getServiceDescriptor("Base");
+$base = $fullStack->getDescriptor("Base");
 
-echo $base->toScript(true)."\n\n";
+echo $base->toScript()."\n\n";
 echo json_encode($base, JSON_PRETTY_PRINT)."\n\n";
 
-$first = $fullStack->getServiceDescriptor("First");
+$first = $fullStack->getDescriptor("First");
 
-echo $first->toScript(true)."\n\n";
+echo $first->toScript()."\n\n";
 echo json_encode($first, JSON_PRETTY_PRINT)."\n\n";
+
+$firstInstance = new Service\First();
+$firstInstance->__construct_instance();
+
+CreativeArea\FullStack\Object::$____fsFS = & $fullStack;
+$firstInstanceEncoded = json_encode($firstInstance, JSON_PRETTY_PRINT);
+echo "$firstInstanceEncoded\n\n";
+
+$decoded = json_decode($firstInstanceEncoded, true);
+
+var_dump($decoded);
+
+$set = [$decoded];
+
+$fullStack->findAndConstructObjects($set);
+
+var_dump($set[0]);
 
 $time = microtime(true) - $time;
 

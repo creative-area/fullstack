@@ -1,9 +1,9 @@
 <?php namespace CreativeArea\FullStack;
 
 /**
- * Class Service.
+ * Class Descriptor.
  */
-class ServiceDescriptor
+class Descriptor
 {
     /**
      * @var bool
@@ -55,15 +55,11 @@ class ServiceDescriptor
     );
 
     /**
-     * @param bool $minify
-     *
-     * @throws Exception
-     *
      * @return string
      */
-    public function toScript($minify = false)
+    public function toScript()
     {
-        $code = $this->abstract ?
+        return $this->abstract ?
             Script::object(array(
                 "abstract" => true,
                 "dependencies" => $this->dependencies,
@@ -89,8 +85,6 @@ class ServiceDescriptor
                             "return ".Script::object($this->methods[ "Remote" ]).";"),
                 )),
             ));
-
-        return $minify ? substr(Script::minify("a$code"), 1) : $code;
     }
 
     /**
@@ -101,8 +95,12 @@ class ServiceDescriptor
      */
     public function build(&$reflectionClass, &$fullStack)
     {
-        if (!$reflectionClass->getAnnotation("Service")) {
-            throw new Exception("class '$reflectionClass->name' is not a service");
+        if (!$reflectionClass->isSubclassOf("CreativeArea\\FullStack\\Object")) {
+            throw new Exception("class '$reflectionClass->name' is not a service (it does not inherit from CreativeArea\\FullStack\\Object)");
+        }
+
+        if ($reflectionClass->name === "CreativeArea\\FullStack\\Object") {
+            throw new Exception("class 'CreativeArea\\FullStack\\Object' cannot be described");
         }
 
         $methodsToIgnore = array(
@@ -110,6 +108,7 @@ class ServiceDescriptor
             "__construct_service" => true,
             "__construct_instance" => true,
             "__construct_execution" => true,
+            "jsonSerialize" => true,
         );
 
         if ($reflectionClass->isAbstract()) {
@@ -122,11 +121,12 @@ class ServiceDescriptor
             }
         }
 
-        while (($parentClass = & $reflectionClass->getParentClass()) && !$parentClass->getAnnotation("Service")) {
-        }
+        $parentClass = & $reflectionClass->getParentClass();
 
-        if ($parentClass) {
-            $this->parent = $fullStack->serviceForClass($parentClass->name);
+        if ($parentClass->name === "CreativeArea\\FullStack\\Object") {
+            $parentClass = null;
+        } else {
+            $this->parent = $fullStack->nameForClass($parentClass->name);
         }
 
         // DEPENDENCIES
@@ -172,7 +172,7 @@ class ServiceDescriptor
                         "own" => $parts,
                     );
                     if ($this->parent) {
-                        $parentStyleFiles = & $fullStack->getServiceDescriptor($this->parent)->styleFiles;
+                        $parentStyleFiles = & $fullStack->getDescriptor($this->parent)->styleFiles;
                         $this->styleFiles[ "parent" ] = array_merge($parentStyleFiles["parent"], $parentStyleFiles["own"]);
                     } else {
                         $this->styleFiles[ "parent" ] = array();
@@ -213,7 +213,7 @@ class ServiceDescriptor
                 continue;
             }
             if (isset($methodsToIgnore[ $method->name ])) {
-                if ($method->name === "__construct_instantiate") {
+                if ($method->name === "__construct_instance") {
                     $this->instantiate = true;
                 }
                 continue;

@@ -1,5 +1,8 @@
 <?php namespace CreativeArea\FullStack;
 
+/**
+ * Class Script.
+ */
 class Script
 {
     /**
@@ -54,7 +57,7 @@ class Script
             return;
         }
 
-        return "({\n".Script::indent(implode(",\n", $fields))."\n})";
+        return "{\n".Script::indent(implode(",\n", $fields))."\n}";
     }
 
     /**
@@ -76,13 +79,13 @@ class Script
                 "return ____fsc[____fsk];\n",
                 false
             );
-            $code = "(".Script::_createFunction(
+            $code = Script::_createFunction(
                 "",
                 "\n".
                 "var ____fsc = {};\n".
                 "return ($code);\n",
                 false
-            ).")()";
+            )."()";
         }
 
         return $code;
