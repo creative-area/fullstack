@@ -71,8 +71,6 @@ class Engine
 
     /**
      * @param mixed $set
-     *
-     * @return mixed
      */
     public function findAndConstructObjects(&$set)
     {
