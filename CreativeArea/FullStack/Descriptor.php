@@ -105,7 +105,7 @@ class Descriptor
 
         $methodsToIgnore = [
             "__construct" => true,
-            "__construct_service" => true,
+            "__construct_class" => true,
             "__construct_instance" => true,
             "__construct_execution" => true,
             "jsonSerialize" => true,
@@ -116,8 +116,8 @@ class Descriptor
             $instance = null;
         } else {
             $instance = $reflectionClass->newInstance();
-            if ($reflectionClass->hasMethod("__construct_service")) {
-                $instance->__construct_service();
+            if ($reflectionClass->hasMethod("__construct_class")) {
+                $instance->__construct_class();
             }
         }
 
