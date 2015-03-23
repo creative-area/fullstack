@@ -21,9 +21,13 @@ class Engine
         ],
         "Method" => [
             "Cache" => "flag",
+            "Path" => "flag",
             "Post" => "flag",
             "Script" => "flag",
-            "Template" => "flag",
+            "Style" => "flag",
+            "Template" => [
+                "normalizeSpace" => true,
+            ],
         ],
         "Property" => [
             "Instance" => "flag",
