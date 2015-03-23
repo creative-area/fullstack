@@ -39,7 +39,11 @@ var_dump($decoded);
 
 $set = [$decoded];
 
+var_dump($fullStack->engine->getUsedTypes());
+
 $fullStack->engine->findAndConstructObjects($set);
+
+var_dump($fullStack->engine->getUsedTypes());
 
 var_dump($set[0]);
 

@@ -88,20 +88,14 @@ class Descriptor
     }
 
     /**
-     * @param \CreativeArea\Annotate\ReflectionClass $reflectionClass
-     * @param \CreativeArea\FullStack\Engine         $engine
+     * @param string                         $className
+     * @param \CreativeArea\FullStack\Engine $engine
      *
      * @throws Exception
      */
-    public function build(&$reflectionClass, &$engine)
+    public function build($className, &$engine)
     {
-        if (!$reflectionClass->isSubclassOf("CreativeArea\\FullStack\\Object")) {
-            throw new Exception("class '$reflectionClass->name' is not a service (it does not inherit from CreativeArea\\FullStack\\Object)");
-        }
-
-        if ($reflectionClass->name === "CreativeArea\\FullStack\\Object") {
-            throw new Exception("class 'CreativeArea\\FullStack\\Object' cannot be described");
-        }
+        $reflectionClass = & $engine->classForName($className);
 
         $methodsToIgnore = [
             "__construct" => true,
@@ -142,7 +136,7 @@ class Descriptor
                     if (preg_match("/\\(\\)$/", $filename)) {
                         $methodName = substr($filename, 0, -2);
                         if ($this->abstract) {
-                            throw new Exception("cannot call method $methodName of abstract class $reflectionClass->name");
+                            throw new Exception("cannot call method $methodName of abstract class $className");
                         }
                         try {
                             $method = & $reflectionClass->getMethod($methodName);

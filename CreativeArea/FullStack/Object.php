@@ -38,6 +38,7 @@ abstract class Object implements \JsonSerializable
                     $map[ $name ] = & $this->$name;
                 }
             }
+            Engine::$current->addUsedType($this->____fs[ "type" ]);
         }
 
         return $map;
