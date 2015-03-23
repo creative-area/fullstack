@@ -137,28 +137,35 @@ class Descriptor
             $list = $reflectionClass->getAnnotation($type);
             $parts = [];
             if ($list) {
-                $method = $type === "Script" ? "getScript" : "getStyle";
+                $getMethod = $type === "Script" ? "getScript" : "getStyle";
                 foreach ($list as $filename) {
-                    if (preg_match("/^->/", $filename)) {
-                        $methodName = substr($filename, 2);
+                    if (preg_match("/\\(\\)$/", $filename)) {
+                        $methodName = substr($filename, 0, -2);
                         if ($this->abstract) {
-                            throw new Exception("Cannot call method $methodName of abstract class $reflectionClass->name");
+                            throw new Exception("cannot call method $methodName of abstract class $reflectionClass->name");
                         }
                         try {
                             $method = & $reflectionClass->getMethod($methodName);
-                        } catch (ReflectionException $e) {
-                            throw new Exception("unknown method '$methodName'");
+                        } catch (\ReflectionException $e) {
+                            throw new Exception("unknown method $methodName");
                         }
                         if (!$method->isPublic() || $method->isStatic()) {
-                            throw new Exception("method '$methodName' is non-public or static");
+                            throw new Exception("method $methodName is non-public or static");
+                        }
+                        if ($method->getAnnotation("Path")) {
+                            $parts[] = $engine->$getMethod($method->invoke($instance));
+                        } elseif ($method->getAnnotation($type)) {
+                            $result = $method->invoke($instance);
+                            $parts[] = $type === "Script" ? $result : [$result];
+                        } else {
+                            throw new Exception("method $methodName is not @$type and not @Path");
                         }
                         $methodsToIgnore[ $methodName ] = true;
-                        $filename = $method->invoke($instance);
+                    } else {
+                        $parts[] = $engine->$getMethod($filename);
                     }
-                    $parts[] = $engine->$method($filename);
                 }
             }
-            $code = "";
             if ($type === "Script") {
                 $this->code[ $type ] = implode(";\n", $parts);
             } else {

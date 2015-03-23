@@ -5,9 +5,24 @@
  *
  * @Script first.js
  * @Style first.scss
+ * @Style styleMethod()
  */
 class First extends Base
 {
+    /**
+     * @return string
+     * @Style
+     */
+    public function styleMethod()
+    {
+        return "
+        \$color: #888;
+        body {
+            color: \$color;
+        }
+        ";
+    }
+
     /**
      * @var bool
      * @Instance

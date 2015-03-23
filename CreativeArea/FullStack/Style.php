@@ -14,7 +14,7 @@ class Style
     {
         $output = "";
         foreach ($paths as $path) {
-            $output .= "@import ".json_encode($path).";\n";
+            $output .= is_array($path) ? "$path[0]\n" : "@import ".json_encode($path).";\n";
         }
 
         return $output;
