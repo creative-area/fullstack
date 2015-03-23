@@ -30,7 +30,7 @@ class Annotations
         if ($comment) {
             $matches = [];
             preg_match_all(
-                '/@([A-Z][a-zA-Z0-9]*)((?:[^"\)\n]|(?:"(?:\\"|[^"\n])*"))*)/',
+                '/@([A-Z][a-zA-Z0-9]*)((?:[^")\n]|(?:"(?:\\"|[^"\n])*"))*\\)?)/',
                 $comment,
                 $matches,
                 PREG_SET_ORDER
