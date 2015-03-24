@@ -1,5 +1,5 @@
 {
-    "name": "creative-area/fullstack",
+    "name": "creativearea/fullstack",
     "description": "PHP to JavaScript object mapping and more",
     "license": "MIT",
     "authors": [ {
@@ -14,7 +14,10 @@
         }
     },
     "require": {
-        "leafo/scssphp": "0.1.1"
+	    "php": ">=5.5.0",
+	    "leafo/scssphp": "0.1.1"
     },
-    "require-dev": {}
+    "require-dev": {
+	    "fabpot/php-cs-fixer": "1.5.2"
+    }
 }
