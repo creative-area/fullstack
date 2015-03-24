@@ -5,9 +5,6 @@
  */
 trait Engine_UsedTypes
 {
-    /**
-     * Trait constructor.
-     */
     private function __construct_used_types()
     {
         $this->nameDependencies = new \CreativeArea\Cache(function &($currentName) {
@@ -29,9 +26,9 @@ trait Engine_UsedTypes
     {
         $map = [];
         $reflectionClass = & $this->classForName->get($currentName);
-        $parentClassName = & $reflectionClass->getParentClass()->name;
-        if ($parentClassName !== "CreativeArea\\FullStack\\Object") {
-            foreach ($this->nameDependencies->get($this->nameForClass->get($parentClassName)) as $name) {
+        $parentClass = & $reflectionClass->getParentClass();
+        if ($parentClass && $parentClass->getAnnotation("FullStack")) {
+            foreach ($this->nameDependencies->get($this->nameForClass->get($parentClass->name)) as $name) {
                 $map[$name] = true;
             }
         }

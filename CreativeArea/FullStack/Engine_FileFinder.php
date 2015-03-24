@@ -5,6 +5,12 @@
  */
 trait Engine_FileFinder
 {
+    private function __construct_file_finder()
+    {
+        $this->scriptFileFinder = new \CreativeArea\FileFinder();
+        $this->styleFileFinder = new \CreativeArea\FileFinder();
+    }
+
     /**
      * @var \CreativeArea\FileFinder
      */
@@ -14,15 +20,6 @@ trait Engine_FileFinder
      * @var \CreativeArea\FileFinder
      */
     public $styleFileFinder;
-
-    /**
-     * Trait constructor.
-     */
-    private function __construct_file_finder()
-    {
-        $this->scriptFileFinder = new \CreativeArea\FileFinder();
-        $this->styleFileFinder = new \CreativeArea\FileFinder();
-    }
 
     /**
      * @param string $path

@@ -2,8 +2,10 @@
 
 /**
  * Class Base.
+ *
+ * @FullStack
  */
-abstract class Base extends \CreativeArea\FullStack\Object
+abstract class Base
 {
     /**
      * @param string $string

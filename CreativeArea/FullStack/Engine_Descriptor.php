@@ -5,9 +5,6 @@
  */
 trait Engine_Descriptor
 {
-    /**
-     * Trait constructor.
-     */
     private function __construct_descriptor()
     {
     }
@@ -87,7 +84,7 @@ trait Engine_Descriptor
 
         $parentClass = & $reflectionClass->getParentClass();
 
-        if ($parentClass->name === "CreativeArea\\FullStack\\Object") {
+        if (!$parentClass || !$parentClass->getAnnotation("FullStack")) {
             $parentClass = null;
         } else {
             $descriptor->parent = $this->nameForClass->get($parentClass->name);

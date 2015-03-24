@@ -3,6 +3,7 @@
 /**
  * Class First.
  *
+ * @FullStack
  * @Script first.js
  * @Style first.scss
  * @Style styleMethod()

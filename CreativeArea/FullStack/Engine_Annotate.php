@@ -5,11 +5,23 @@
  */
 trait Engine_Annotate
 {
+    private function __construct_annotate()
+    {
+        $this->annotate = new \CreativeArea\Annotate(static::$annotations);
+        $this->classForName = new \CreativeArea\Cache(function &($name) {
+            return $this->getClassForName($name);
+        });
+        $this->nameForClass = new \CreativeArea\Cache(function &($className) {
+            return $this->getNameForClass($className);
+        });
+    }
+
     /**
      * @var array
      */
     private static $annotations = [
         "Class" => [
+            "FullStack" => "flag",
             "DependsOn" => "string[]",
             "Script" => "string[]",
             "Style" => "string[]",
@@ -32,40 +44,9 @@ trait Engine_Annotate
     ];
 
     /**
-     * @param \CreativeArea\Annotate\ReflectionClass $reflectionClass
-     *
-     * @throws Exception
-     */
-    private static function controlClass(&$reflectionClass)
-    {
-        static $baseClass = "CreativeArea\\FullStack\\Object";
-        if (!$reflectionClass->isSubclassOf($baseClass)) {
-            throw new Exception("class $reflectionClass->name is not a proper class (it does not inherit from $baseClass)");
-        }
-
-        if ($reflectionClass->name === $baseClass) {
-            throw new Exception("class $baseClass is not a proper class");
-        }
-    }
-
-    /**
      * @var \CreativeArea\Annotate
      */
     private $annotate;
-
-    /**
-     * Trait constructor.
-     */
-    private function __construct_annotate()
-    {
-        $this->annotate = new \CreativeArea\Annotate(static::$annotations);
-        $this->classForName = new \CreativeArea\Cache(function &($name) {
-            return $this->getClassForName($name);
-        });
-        $this->nameForClass = new \CreativeArea\Cache(function &($className) {
-            return $this->getNameForClass($className);
-        });
-    }
 
     /**
      * @var string[]
@@ -98,9 +79,9 @@ trait Engine_Annotate
         foreach ($this->namespaces as $namespace) {
             try {
                 $class = & $this->annotate->getClass($namespace.$path);
-                static::controlClass($class);
-
-                return $class;
+                if ($class->getAnnotation("FullStack")) {
+                    return $class;
+                }
             } catch (\ReflectionException $e) {
             }
         }
