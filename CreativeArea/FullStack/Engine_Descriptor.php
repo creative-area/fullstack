@@ -69,7 +69,6 @@ trait Engine_Descriptor
             "__construct_class" => true,
             "__construct_instance" => true,
             "__construct_execution" => true,
-            "jsonSerialize" => true,
         ];
 
         if ($reflectionClass->isAbstract()) {
