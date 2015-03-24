@@ -29,23 +29,16 @@ echo json_encode($first, JSON_PRETTY_PRINT)."\n\n";
 $firstInstance = new Service\First();
 $firstInstance->__construct_instance();
 
-CreativeArea\FullStack\Engine::$current = & $fullStack->engine;
-$firstInstanceEncoded = json_encode($firstInstance, JSON_PRETTY_PRINT);
+$firstInstanceEncoded = $fullStack->engine->jsonEncode($firstInstance, JSON_PRETTY_PRINT);
 echo "$firstInstanceEncoded\n\n";
 
-$decoded = json_decode($firstInstanceEncoded, true);
+var_dump($fullStack->engine->getUsedTypes());
+
+$decoded = & $fullStack->engine->jsonDecode($firstInstanceEncoded);
+
+var_dump($fullStack->engine->getUsedTypes());
 
 var_dump($decoded);
-
-$set = [$decoded];
-
-var_dump($fullStack->engine->getUsedTypes());
-
-$fullStack->engine->findAndConstructObjects($set);
-
-var_dump($fullStack->engine->getUsedTypes());
-
-var_dump($set[0]);
 
 $time = microtime(true) - $time;
 

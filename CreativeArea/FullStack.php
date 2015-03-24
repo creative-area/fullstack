@@ -22,7 +22,7 @@ class FullStack
      */
     public function using($namespace)
     {
-        array_unshift($this->engine->namespaces, preg_replace("/\\\\?$/", "\\", $namespace));
+        $this->engine->addNamespace($namespace);
 
         return $this;
     }
@@ -58,7 +58,7 @@ class FullStack
      */
     public function storage(&$storage)
     {
-        $this->engine->cache = $storage === null ? null : new Storage\Cache($storage);
+        $this->engine->setStorage($storage);
 
         return $this;
     }
@@ -70,7 +70,7 @@ class FullStack
      */
     public function version($version)
     {
-        $this->engine->version = $version;
+        $this->engine->setVersion($version);
 
         return $this;
     }

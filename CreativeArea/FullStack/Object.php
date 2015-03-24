@@ -18,29 +18,6 @@ abstract class Object implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $map = [];
-        if ($this->____fs) { // was provided remotely
-            $reflectionClass = & Engine::$current->classForName($this->____fs[ "type" ]);
-            foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC) as &$property) {
-                if (!$property->isStatic() && $property->getAnnotation("Synchronize")) {
-                    $name = $property->name;
-                    $map[ $name ] = & $this->$name;
-                }
-            }
-        } else { // was constructed during this call
-            $this->____fs = [
-                "type" => Engine::$current->nameForClass(get_class($this)),
-            ];
-            $reflectionClass = & Engine::$current->classForName($this->____fs[ "type" ]);
-            foreach ($reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC) as &$property) {
-                if (!$property->isStatic() && $property->getAnnotation("Instance")) {
-                    $name = $property->name;
-                    $map[ $name ] = & $this->$name;
-                }
-            }
-            Engine::$current->addUsedType($this->____fs[ "type" ]);
-        }
-
-        return $map;
+        return Engine::objectEncode($this);
     }
 }
