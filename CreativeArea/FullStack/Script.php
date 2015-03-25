@@ -72,18 +72,17 @@ class Script
         $code = "function($args) {\n".Script::indent(trim($body))."\n}";
         if ($withCache) {
             $code = Script::_createFunction(
-                $args,
-                "\n".
-                "var ____fsk = JSON.stringify([$args]);\n".
-                "if (!____fsc.hasOwnProperty(____fsk)) ____fsc[____fsk] = ($code).apply(this,arguments);\n".
-                "return ____fsc[____fsk];\n",
-                false
-            );
-            $code = Script::_createFunction(
                 "",
                 "\n".
-                "var ____fsc = {};\n".
-                "return ($code);\n",
+                "var __fsc = {};\n".
+                "var __fsf = $code;\n".
+                "return (".Script::_createFunction(
+                    $args,
+                    "\n".
+                    "var __fsk = JSON.stringify([$args]);\n".
+                    "return __fsc.hasOwnProperty(__fsk) ? __fsc[__fsk] : ( __fsc[__fsk] = __fsf.apply(this,[$args]) );\n",
+                    false
+                ).");\n",
                 false
             )."()";
         }
