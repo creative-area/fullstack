@@ -45,6 +45,8 @@ class Annotations
                 $value = $this->decodeStringValue($value);
                 if (is_array($definition)) {
                     $this->add_object($type, $value, $definition);
+                } elseif ($definition instanceof \Closure) {
+                    $this->add_closure($type, $value, $definition);
                 } else {
                     $method = "add_".Annotations::$definitionTypes[ $definition ];
                     $this->$method($type, $value);
@@ -70,6 +72,16 @@ class Annotations
         }
 
         return $value;
+    }
+
+    /**
+     * @param string   $type
+     * @param mixed    $value
+     * @param \Closure $closure
+     */
+    private function add_closure($type, $value, &$closure)
+    {
+        $this->cache[ $type ] = $closure->__invoke($value, isset($this->cache[ $type ]) ? $this->cache[ $type ] : null, $type);
     }
 
     /**
@@ -102,7 +114,7 @@ class Annotations
             throw new Exception("annotation $type cannot be used twice");
         }
         if ($value === null) {
-            $value = new stdClass();
+            $value = new \stdClass();
         }
         if (!is_object($value)) {
             throw new Exception("annotation $type only accepts an object");
