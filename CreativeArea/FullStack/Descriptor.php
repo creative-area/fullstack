@@ -36,7 +36,7 @@ class Descriptor
     public $properties = [];
 
     /**
-     * @var bool[]
+     * @var int[]
      */
     public $instanceProperties = [];
 

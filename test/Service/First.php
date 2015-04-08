@@ -30,6 +30,34 @@ class First extends Base
      */
     public $constructServiceCalled = false;
 
+    /**
+     * @var string
+     * @Instance
+     * @Synchronize client -> server
+     */
+    public $clientToServer = "hello world";
+
+    /**
+     * @var string
+     * @Instance
+     * @Synchronize client <- server
+     */
+    public $serverToClient = "hello world";
+
+    /**
+     * @var string
+     * @Instance
+     * @Synchronize
+     */
+    public $bothWay1 = "hello world";
+
+    /**
+     * @var string
+     * @Instance
+     * @Synchronize client <-> server
+     */
+    public $bothWay2 = "hello world";
+
     public function __construct_instance()
     {
         $this->constructServiceCalled = true;

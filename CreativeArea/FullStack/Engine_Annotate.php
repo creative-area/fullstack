@@ -7,7 +7,51 @@ trait Engine_Annotate
 {
     private function __construct_annotate()
     {
-        $this->annotate = new \CreativeArea\Annotate(static::$annotations);
+        $this->annotate = new \CreativeArea\Annotate([
+            "Class" => [
+                "FullStack" => "flag",
+                "DependsOn" => "string[]",
+                "Script" => "string[]",
+                "Style" => "string[]",
+            ],
+            "Method" => [
+                "Cache" => "flag",
+                "Path" => "flag",
+                "Post" => "flag",
+                "Script" => "flag",
+                "Style" => "flag",
+                "Template" => [
+                    "normalizeSpace" => true,
+                ],
+            ],
+            "Property" => [
+                "Instance" => "flag",
+                "Raw" => "flag",
+                // 0 => no synchro (never output)
+                // 1 => synchro server to client
+                // 2 => synchro client to server
+                // 3 => both
+                "Synchronize" => function ($expression, $previous, $type) {
+                    if ($previous !== null) {
+                        throw new \CreativeArea\Annotate\Exception("annotation $type cannot be used twice");
+                    }
+                    if (!$expression) {
+                        return 3;
+                    }
+                    if (!is_string($expression)) {
+                        throw new \CreativeArea\Annotate\Exception("annotation $type only accepts a string");
+                    }
+                    $expression = trim($expression);
+                    $matches = [];
+                    if (!preg_match("/^client\s*(<?)-(>?)\s*server$/i", $expression, $matches) ||
+                        !$matches[ 1 ] && !$matches[ 2 ]) {
+                        throw new \CreativeArea\Annotate\Exception("wrong format for annotation $type: '$expression'");
+                    }
+
+                    return ($matches[ 1 ] ? 1 : 0) + ($matches[ 2 ] ? 2 : 0);
+                },
+            ],
+        ]);
         $this->classForName = new \CreativeArea\Cache(function &($name) {
             return $this->getClassForName($name);
         });
@@ -15,33 +59,6 @@ trait Engine_Annotate
             return $this->getNameForClass($className);
         });
     }
-
-    /**
-     * @var array
-     */
-    private static $annotations = [
-        "Class" => [
-            "FullStack" => "flag",
-            "DependsOn" => "string[]",
-            "Script" => "string[]",
-            "Style" => "string[]",
-        ],
-        "Method" => [
-            "Cache" => "flag",
-            "Path" => "flag",
-            "Post" => "flag",
-            "Script" => "flag",
-            "Style" => "flag",
-            "Template" => [
-                "normalizeSpace" => true,
-            ],
-        ],
-        "Property" => [
-            "Instance" => "flag",
-            "Raw" => "flag",
-            "Synchronize" => "flag",
-        ],
-    ];
 
     /**
      * @var \CreativeArea\Annotate

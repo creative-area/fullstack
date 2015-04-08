@@ -166,7 +166,11 @@ trait Engine_Descriptor
                 continue;
             }
             if ($property->getAnnotation("Instance")) {
-                $descriptor->instanceProperties[ $property->name ] = !!$property->getAnnotation("Synchronize");
+                $synchronize = $property->getAnnotation("Synchronize");
+                if (!$synchronize) {
+                    $synchronize = 0;
+                }
+                $descriptor->instanceProperties[ $property->name ] = $synchronize;
                 continue;
             }
             $value = $property->getValue($instance);
