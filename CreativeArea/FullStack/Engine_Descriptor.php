@@ -207,12 +207,14 @@ trait Engine_Descriptor
                 $args = ["form"];
                 $body = "return post(this, ".json_encode($method->name).", form);";
                 $methodsArray = & $descriptor->methods[ "Post" ];
-            } else {
+            } elseif ($method->getAnnotation("Remote")) {
                 $args = array_map(function (&$parameter) {
                     return $parameter->name;
                 }, $parameters);
                 $body = "return remote(this, ".json_encode($method->name).", arguments);";
                 $methodsArray = & $descriptor->methods[ "Remote" ];
+            } else {
+                continue;
             }
             $methodsArray[ $method->name ] = Script::createFunction($args, $body, $method->getAnnotation("Cache"));
         }

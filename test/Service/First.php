@@ -92,6 +92,7 @@ class First extends Base
      * @param $nb
      *
      * @return mixed
+     * @Remote
      */
     public function remoteTwice($nb)
     {

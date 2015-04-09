@@ -18,6 +18,7 @@ trait Engine_Annotate
                 "Cache" => "flag",
                 "Path" => "flag",
                 "Post" => "flag",
+                "Remote" => "flag",
                 "Script" => "flag",
                 "Style" => "flag",
                 "Template" => [
