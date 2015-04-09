@@ -71,7 +71,8 @@ usort($scripts, function ($a, $b) {
     return $a["size"] - $b["size"];
 });
 
-function format($num) {
+function format($num)
+{
     return number_format($num, 2);
 }
 
@@ -100,7 +101,7 @@ foreach ($scripts as $script) {
         $time = microtime(true);
         try {
             $result = $minifier->run($script["content"]);
-        } catch( Exception $e ) {
+        } catch (Exception $e) {
             echo "<tr>
             <th>$name</th>
             <td colspan='6'>ERROR: ".$e->getMessage()."</td>
