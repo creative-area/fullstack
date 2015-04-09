@@ -27,6 +27,7 @@ trait Engine_Annotate
             ],
             "Property" => [
                 "Instance" => "flag",
+                "Prototype" => "flag",
                 "Raw" => "flag",
                 // 0 => no synchro (never output)
                 // 1 => synchro server to client

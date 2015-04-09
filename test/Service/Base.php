@@ -8,6 +8,17 @@
 abstract class Base
 {
     /**
+     * @var int
+     * @Prototype
+     */
+    public $number = 66;
+
+    /**
+     * @var int
+     */
+    public $notPrototypeNotInstance = 69;
+
+    /**
      * @param string $string
      *
      * @return string

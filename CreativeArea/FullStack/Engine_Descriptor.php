@@ -171,13 +171,13 @@ trait Engine_Descriptor
                     $synchronize = 0;
                 }
                 $descriptor->instanceProperties[ $property->name ] = $synchronize;
-                continue;
+            } elseif ($property->getAnnotation("Prototype")) {
+                $value = $property->getValue($instance);
+                if (!$property->getAnnotation("Raw")) {
+                    $value = json_encode($value);
+                }
+                $descriptor->properties[ $property->name ] = $value;
             }
-            $value = $property->getValue($instance);
-            if (!$property->getAnnotation("Raw")) {
-                $value = json_encode($value);
-            }
-            $descriptor->properties[ $property->name ] = $value;
         }
 
         // METHODS
