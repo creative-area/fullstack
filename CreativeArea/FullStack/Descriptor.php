@@ -69,21 +69,17 @@ class Descriptor
                 ]),
             ]) :
             Script::object([
-                "dependencies" => $this->dependencies,
-                "instantiate" => $this->instantiate,
-                "code" => Script::object([
-                    "script" => Script::createFunction([], $this->code["Script"]),
-                    "style" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
-                ]),
-                "properties" => Script::object($this->properties),
-                "iProperties" => Script::object($this->instanceProperties),
-                "methods" => Script::object([
-                    "post" => Script::createFunction(["post"],
-                            "return ".Script::object($this->methods[ "Post" ]).";"),
-                    "script" => Script::object($this->methods[ "Script" ]),
-                    "remote" => Script::createFunction(["remote"],
-                            "return ".Script::object($this->methods[ "Remote" ]).";"),
-                ]),
+                "deps" => $this->dependencies,
+                "inst" => $this->instantiate,
+                "preScript" => Script::createFunction([], $this->code["Script"]),
+                "preStyle" => isset($this->code["Style"]) ? json_encode($this->code["Style"]) : null,
+                "props" => Script::object($this->properties),
+                "iProps" => Script::object($this->instanceProperties),
+                "post" => count($this->methods[ "Post" ]) ? Script::createFunction(["post"],
+                        "return ".Script::object($this->methods[ "Post" ]).";") : null,
+                "script" => Script::object($this->methods[ "Script" ]),
+                "remote" => count($this->methods[ "Remote" ]) ? Script::createFunction(["remote"],
+                        "return ".Script::object($this->methods[ "Remote" ]).";") : null,
             ]);
     }
 };
